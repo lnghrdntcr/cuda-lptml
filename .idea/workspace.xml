@@ -11,7 +11,15 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5be44cd5-b2de-4eec-8580-735eadfeb485" name="Default Changelist" comment="" />
+    <list default="true" id="5be44cd5-b2de-4eec-8580-735eadfeb485" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/cuda_wrapper.cuh" beforeDir="false" afterPath="$PROJECT_DIR$/lib/cuda_wrapper.cuh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lptml.cuh" beforeDir="false" afterPath="$PROJECT_DIR$/lib/lptml.cuh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lptml.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/lptml.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/types.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/types.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils.h" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,6 +30,9 @@
     <option name="formatViaClangd" value="false" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectId" id="1VhKwR6k49H0SB0LKjpoU5L8JaD" />
   <component name="PropertiesComponent">
@@ -63,21 +74,28 @@
       <workItem from="1577703679710" duration="4696000" />
       <workItem from="1577956712950" duration="728000" />
       <workItem from="1577957451664" duration="9201000" />
+      <workItem from="1577980156168" duration="35000" />
+      <workItem from="1577984666161" duration="4638000" />
+      <workItem from="1578420420792" duration="697000" />
+      <workItem from="1579908124723" duration="9146000" />
+      <workItem from="1579993760140" duration="10162000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/lib/lptml.h</url>
-          <line>94</line>
-          <option name="timeStamp" value="23" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

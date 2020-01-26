@@ -10,6 +10,8 @@
 #include <thrust/functional.h>*/
 #include "csv.h"
 #include "types.h"
+#include <cstdlib>
+#include <ctime>
 
 pair_index_type combinations(unsigned_type begin, unsigned_type end) {
     // Res must be of (end - begin) * (end - begin - 1)
@@ -166,7 +168,7 @@ matrix_type cholesky_transformer(matrix_type initial_matrix){
     }
 
     return temp_cholesky;
-    
+
 }
 
 template <typename T>
@@ -183,6 +185,34 @@ std::vector<T> unwrap_constraint(pair_type constraints){
     }
 
     return unwrapped;
+}
+
+template <typename T>
+std::vector<T> unwrap_matrix(matrix_type matrix){
+    std::vector<T> unwrapped;
+
+    for(auto row: matrix){
+        for (auto el: row){
+            unwrapped.push_back(el);
+        }
+    }
+
+    return unwrapped;
+
+}
+
+row_type cpu_mmult(matrix_type A, row_type x){
+    const unsigned_type num_rows = A.size();
+    const unsigned_type num_cols = A[0].size();
+
+    row_type ret(num_rows, 0.0);
+
+    for(int i = 0; i < num_rows; ++i){
+        for(int j = 0; j < num_cols; ++j){
+            ret[i] += A[i][j] * x[j];
+        }
+    }
+    return ret;
 }
 
 #endif //LPTML_UTILS_H

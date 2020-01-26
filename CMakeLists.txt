@@ -11,5 +11,4 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
-
 add_executable(lptml_cuda main.cu lib/csv.h lib/lptml.cuh lib/utils.h lib/lptml.h lib/types.h lib/cuda_wrapper.cuh)

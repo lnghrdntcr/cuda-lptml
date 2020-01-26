@@ -6,6 +6,7 @@
 #define LPTML_TYPES_H
 
 #include <utility>
+#include <map>
 
 #define float_type float
 #define unsigned_type unsigned int
@@ -14,8 +15,11 @@
 #define matrix_type std::vector<row_type>
 #define label_row_type std::vector<unsigned_type>
 
-#define pair_type std::vector<std::pair<std::vector<float_type>, std::vector<float_type>>>
+#define constraint_type std::pair<std::vector<float_type>, std::vector<float_type>>
+#define pair_type std::vector<constraint_type>
 #define pair_index_type std::vector<std::pair<unsigned_type, unsigned_type>>
+
+#define h_prime_type std::map<std::string, std::vector<constraint_type>>
 
 float_type as_float_type(float el){
     return *(float_type *) (&el);
