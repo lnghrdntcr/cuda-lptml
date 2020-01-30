@@ -139,6 +139,14 @@ void train_test_split(
 
 }
 
+bool deep_equal(row_type a, row_type b){
+    if(a.size() != b.size()) return false;
+    for (int i = 0; i < a.size(); ++i) {
+        if(a[i] != b[i]) return false;
+    }
+    return true;
+}
+
 matrix_type identity(size_t dimension){
     auto identity_matrix = matrix_type (dimension, row_type(dimension, 0.0));
     for (int i = 0; i < dimension; ++i) {

@@ -12,13 +12,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5be44cd5-b2de-4eec-8580-735eadfeb485" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/cuda_wrapper.cuh" beforeDir="false" afterPath="$PROJECT_DIR$/lib/cuda_wrapper.cuh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/lptml.cuh" beforeDir="false" afterPath="$PROJECT_DIR$/lib/lptml.cuh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/lptml.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/lptml.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/types.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/types.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.cu" beforeDir="false" afterPath="$PROJECT_DIR$/main.cu" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -35,9 +36,11 @@
   </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectId" id="1VhKwR6k49H0SB0LKjpoU5L8JaD" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Color Scheme Font" />
   </component>
   <component name="RunDashboard">
@@ -78,7 +81,11 @@
       <workItem from="1577984666161" duration="4638000" />
       <workItem from="1578420420792" duration="697000" />
       <workItem from="1579908124723" duration="9146000" />
-      <workItem from="1579993760140" duration="10162000" />
+      <workItem from="1579993760140" duration="22090000" />
+      <workItem from="1580189966360" duration="599000" />
+      <workItem from="1580208735421" duration="750000" />
+      <workItem from="1580259822460" duration="6049000" />
+      <workItem from="1580410602483" duration="2624000" />
     </task>
     <servers />
   </component>

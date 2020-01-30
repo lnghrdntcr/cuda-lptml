@@ -1,13 +1,18 @@
 #include <iostream>
+#include <cstdio>
 #include "clion_utils.h"
 #include "lib/csv.h"
 #include "lib/types.h"
 #include "lib/utils.h"
 #include "lib/lptml.h"
 #include "lib/cuda_wrapper.cuh"
-
+#include "/usr/include/mosek.h"
 #define IRIS_PATH "/home/francesco/CLionProjects/lptml/datasets/iris.csv"
 #define ITERATIONS 2000
+
+#include "lib/mosek/9.1/tools/platform/linux64x86/h/fusion.h"
+#include "lib/mosek/9.1/tools/platform/linux64x86/h/mosek.h"
+
 
 int main() {
 

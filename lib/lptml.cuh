@@ -10,22 +10,13 @@
 template<typename T, unsigned_type column_count = 4>
 __device__
 __forceinline__
-        T
-l2norm(T
-*row1,
-T *row2
-){
-T acc = 0.0;
-for (
-int i = 0;
-i<column_count;
-++i) {
-T tmp = (row1[i] - row2[i]);
-acc +=
-tmp *tmp;
-}
-return
-sqrt(acc);
+T l2norm(T *row1, T *row2){
+    T acc = 0.0;
+    for (int i = 0; i<column_count; ++i) {
+        T tmp = (row1[i] - row2[i]);
+        acc += tmp *tmp;
+    }
+    return sqrt(acc);
 }
 
 // Note, for obvious reasons res must be PAIR_DIM in size...

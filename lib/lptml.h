@@ -13,6 +13,8 @@
 #include <cstdlib>
 #include <ctime>
 
+
+
 unsigned_type count_single_constraint(
                                     const pair_type constraint,
                                     const float_type value,
@@ -107,10 +109,14 @@ std::pair<h_prime_type, unsigned_type> subsample (
 return std::make_pair(H_prime, s_count + d_count);
 }
 
-constraint_type calculate_initial_basis(
+h_prime_type calculate_initial_basis(
         h_prime_type H
         ) {
-    return H["S"][0];
+    h_prime_type tmp;
+    std::vector<constraint_type> tmp_v;
+    tmp_v.push_back(H["S"][0]);
+    tmp["S"] = tmp_v;
+    return tmp;
 }
 
 h_prime_type initial_sort(
@@ -192,7 +198,215 @@ h_prime_type initial_sort(
     return constraints;
 }
 
-matrix_type learn_metric(
+std::vector<constraint_type> unit_get_permutation(
+        std::vector<constraint_type> constraints,
+        std::vector<constraint_type> b_constraints
+    ) {
+
+    std::vector<constraint_type> c_prime_proj;
+
+    for(int i = 0; i < constraints.size(); ++i){
+        constraint_type constraint = constraints[i];
+        bool exists_in_both = false;
+        for(int j = 0; j < b_constraints.size(); ++j){
+
+            constraint_type b_constraint = b_constraints[j];
+
+            if(deep_equal(constraint.first, b_constraint.first) && deep_equal(constraint.second, b_constraint.second)){
+                exists_in_both = true;
+            }
+        }
+
+        if(!exists_in_both) {
+            c_prime_proj.push_back(constraint);
+        }
+    }
+    return c_prime_proj;
+}
+
+h_prime_type get_permutation(
+        h_prime_type B,
+        h_prime_type C,
+        const bool DEBUG = false
+        ) {
+
+    h_prime_type C_prime;
+
+    std::thread s([&B, &C, &C_prime]() {
+        auto s_constraints = (C.find("S") != C.end()) ? C.find("S")->second : std::vector<constraint_type>(0);
+        auto s_b_constraints = (B.find("S") != B.end()) ? B.find("S")->second : std::vector<constraint_type>(0);
+        auto c_prime_s_proj = unit_get_permutation(s_constraints, s_b_constraints);
+        C_prime["S"] = c_prime_s_proj;
+    });
+
+    std::thread t([&B, &C, &C_prime]() {
+        auto d_constraints = (C.find("D") != C.end()) ? C.find("D")->second : std::vector<constraint_type>(0);
+        auto d_b_constraints = (B.find("D") != B.end()) ? B.find("D")->second : std::vector<constraint_type>(0);
+        auto c_prime_d_proj = unit_get_permutation(d_constraints, d_b_constraints);
+        C_prime["D"] = c_prime_d_proj;
+    });
+
+    s.join();
+    t.join();
+
+    if(DEBUG) std::cout << "Size: \n\tC_prime[\"S\"] = " << C_prime["S"].size() << "\n\tC_prime[\"D\"] = " << C_prime["S"].size()<< std::endl;
+
+    return C_prime;
+
+}
+
+void maximal_violation(
+        h_prime_type constraints,
+        int skip,
+        matrix_type A,
+        float_type u,
+        float_type l,
+        constraint_type &c_ret,
+        float_type &e_ret,
+        int &t_ret,
+        std::string &key_ret
+        ){
+    //TODO: this segfaults
+    int worst_index_S = 0;
+    float worst_value_S = INT_MAX * -1;
+    int worst_index_D = 0;
+    float worst_value_D = INT_MAX * -1;
+    int idx_D = 0;
+    int idx_S = 0;
+    bool empty_S = false;
+    bool empty_D = false;
+    matrix_type G;
+
+    if(constraints.size() == 0) return;
+    G = cholesky_transformer(A);
+
+    std::thread s([&worst_index_S, &worst_value_S, &constraints, &G, u, &idx_S, skip, &empty_S](){
+        auto it_s = constraints.find("S");
+        if(it_s == constraints.end()) {
+            empty_S = true;
+            return;
+        }
+
+        auto constraints_S = constraints.find("S")->second;
+
+        for(auto constraint: constraints_S) {
+            auto i = cpu_mmult(G, constraint.first);
+            auto j = cpu_mmult(G, constraint.second);
+
+            float_type violation_tmp = 0.0;
+            for(unsigned_type iter = 0; iter < i.size(); ++iter){
+                violation_tmp += (i[iter] - j[iter]) * (i[iter] - j[iter]);
+            }
+            violation_tmp = sqrt(violation_tmp) - u;
+
+            if(violation_tmp > worst_value_S && idx_S >= skip){
+                worst_value_S = violation_tmp;
+                worst_index_S = idx_S;
+                idx_S ++;
+            }
+        }
+    });
+
+    std::thread d([&worst_index_D, &worst_value_D, &constraints, &G, l, &idx_D, skip, &empty_D](){
+        auto it_s = constraints.find("D");
+        if(it_s == constraints.end()) {
+            empty_D = true;
+            return;
+        }
+
+        auto constraints_D = constraints.find("D")->second;
+
+        for(auto constraint: constraints_D) {
+            auto i = cpu_mmult(G, constraint.first);
+            auto j = cpu_mmult(G, constraint.second);
+            float_type violation_tmp = 0.0;
+            for(unsigned_type iter = 0; iter < i.size(); ++iter){
+                violation_tmp += (i[iter] - j[iter]) * (i[iter] - j[iter]);
+            }
+            violation_tmp = l - sqrt(violation_tmp);
+
+            if(violation_tmp > worst_value_D && idx_D >= skip){
+                worst_value_D = violation_tmp;
+                worst_index_D = idx_D;
+                idx_D ++;
+            }
+        }
+    });
+
+    s.join();
+    d.join();
+
+    float_type worst_index;
+    float_type worst_value;
+    std::string key = "";
+    if((empty_D  && !empty_S) || worst_value_S <= worst_value_D) {
+        worst_index = worst_index_S;
+        worst_value = worst_value_S;
+        key = "S";
+    } else {
+        worst_index = worst_index_D;
+        worst_value = worst_value_D;
+        key = "D";
+    }
+
+    c_ret = constraints[key][worst_index];
+    e_ret = worst_value;
+    t_ret = worst_index;
+    key_ret = key;
+}
+
+void pivot_LPType(
+        h_prime_type B,
+        h_prime_type C,
+        float_type u,
+        float_type l,
+        unsigned_type d,
+        unsigned_type last_cost,
+        bool use_last_cost,
+        matrix_type basis_A,
+        const bool DEBUG = true
+    ){
+
+    bool calculate_basis_cost = !use_last_cost;
+    unsigned_type current_basis_cost = last_cost;
+
+    matrix_type A = identity(d);
+    if(basis_A.size() != 0) A = basis_A;
+
+    auto C_perm = get_permutation(B, C);
+    auto Buc = h_prime_type(B);
+    int i = 0;
+
+    while(true){
+        constraint_type c;
+        float_type e;
+        int t;
+        std::string key;
+
+        maximal_violation(C_perm, i, A, u, l, c, e, t, key);
+
+        if( DEBUG ) std::cout << "E = " << e << " t = " << t << " key = " << key << std::endl;
+        if(e <= 0) break;
+
+        auto to_unshift = C_perm[key][t];
+        C_perm[key].erase(C_perm[key].begin() + t);
+        C_perm[key].insert(C_perm[key].begin(), to_unshift);
+
+        i ++;
+
+        auto Bh = h_prime_type(B);
+        Bh[key].push_back(c);
+        Buc[key].push_back(c);
+
+        // Calculate the cost of the new candidate basis and the cost of the current basis
+
+
+}
+
+
+}
+
+matrix_type learn_metric (
         pair_type S,
         pair_type D,
         float_type u,
@@ -233,7 +447,7 @@ matrix_type learn_metric(
         R = initial_sort(R, initial_solution, u, l);
 
         //TODO: pivot_LP_TYPE
-
+        pivot_LPType(B0, R, u, l, dimension, 0, false, matrix_type());
         //if(DEBUG) std::cout << "R_COUNT = " << r_count << std::endl;
     }
 
