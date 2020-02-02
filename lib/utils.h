@@ -117,8 +117,8 @@ void train_test_split(
         std::vector<R> *y_test,
         std::vector<T> x,
         std::vector<R> y,
-        const float_type factor = 0.5,
-        const bool DEBUG = false
+        const float_type factor = 0.25,
+        const bool DEBUG = true
         ){
 
     const unsigned_type split_rateo = (float) 1 / factor;
@@ -128,12 +128,12 @@ void train_test_split(
     }
 
     for (int i = 0; i < x.size(); ++i) {
-        if(i % split_rateo == 0){
-            (*x_train).push_back(x[i]);
-            (*y_train).push_back(y[i]);
-        } else {
+        if(((float_type) rand() / RAND_MAX) <= factor){
             (*x_test).push_back(x[i]);
             (*y_test).push_back(y[i]);
+        } else {
+            (*x_train).push_back(x[i]);
+            (*y_train).push_back(y[i]);
         }
     }
 
@@ -218,6 +218,21 @@ row_type cpu_mmult(matrix_type A, row_type x){
     for(int i = 0; i < num_rows; ++i){
         for(int j = 0; j < num_cols; ++j){
             ret[i] += A[i][j] * x[j];
+        }
+    }
+    return ret;
+}
+
+matrix_type cpu_mmult(matrix_type A, matrix_type B){
+
+    matrix_type ret(A.size(), row_type(B[0].size(), 0));
+
+    for (unsigned_type i = 0; i < A.size(); i++) {
+        for (unsigned_type j = 0; j < B[0].size(); j++) {
+            for (unsigned_type k = 0; k < B.size(); k++)
+            {
+                ret[i][j] += A[i][k] * B[k][j];
+            }
         }
     }
     return ret;

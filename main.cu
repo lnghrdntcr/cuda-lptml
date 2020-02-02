@@ -6,15 +6,14 @@
 #include "lib/utils.h"
 #include "lib/lptml.h"
 #include "lib/cuda_wrapper.cuh"
-#include "/usr/include/mosek.h"
 #define IRIS_PATH "/home/francesco/CLionProjects/lptml/datasets/iris.csv"
 #define ITERATIONS 2000
-
-#include "lib/mosek/9.1/tools/platform/linux64x86/h/fusion.h"
-#include "lib/mosek/9.1/tools/platform/linux64x86/h/mosek.h"
-
+#define NUM_TESTS 10
 
 int main() {
+
+    // Initialize random seed
+    srand(time(0));
 
     // Dimensions
     const unsigned_type DIM_X = 4;
@@ -40,7 +39,23 @@ int main() {
     label_row_type y_train;
     label_row_type y_test;
 
-    train_test_split(&x_train, &x_test, &y_train, &y_test, dataset, labels);
+    std::vector<float_type> accuracies;
 
-    fit(x_train, y_train, u, l, DIM_Y, DIM_X, combinations(0, x_train.size()));
+    for (int i = 0; i < NUM_TESTS; ++i) {
+        train_test_split(&x_train, &x_test, &y_train, &y_test, dataset, labels);
+
+        auto G = fit(x_train, y_train, u, l, DIM_Y, DIM_X, combinations(0, x_train.size()));
+        auto x_train_lptml = cpu_mmult(G, x_train);
+        auto accuracy = predict(x_train_lptml, y_train, x_test, y_test);
+        accuracies.push_back(accuracy);
+        x_train.clear();
+        x_test.clear();
+        y_train.clear();
+        y_test.clear();
+    }
+
+    for (int i = 0; i < accuracies.size(); ++i) {
+        std::cout << "Test " << i + 1 << ") -> " << accuracies[i] << std::endl;
+    }
+
 }

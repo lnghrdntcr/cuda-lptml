@@ -19,10 +19,11 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")]]
 set(CMAKE_CXX_STANDARD 17)
 set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
 set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
-
 #[[
-set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -I/home/francesco/Downloads/mosek/9.1/tools/platform/linux64x86/h -L/home/francesco/Downloads/mosek/9.1/tools/platform/linux64x86/bin")
-set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -lmosek64 -lfusion64")
-]]
 
-add_executable(lptml_cuda main.cu lib/csv.h lib/lptml.cuh lib/utils.h lib/lptml.h lib/types.h lib/cuda_wrapper.cuh)
+set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -I/home/francesco/CLionProjects/lptml_cuda/lib/mosek/9.1/tools/platform/linux64x86/h -L/home/francesco/CLionProjects/lptml_cuda/lib/mosek/9.1/tools/platform/linux64x86/bin/libmosek64.so /home/francesco/CLionProjects/lptml_cuda/lib/mosek/9.1/tools/platform/linux64x86/bin/ -Wl, rpath-link,/home/francesco/CLionProjects/lptml_cuda/lib/mosek/9.1/tools/platform/linux64x86/bin -Wl,-rpath=/home/francesco/CLionProjects/lptml_cuda/lib/mosek/9.1/tools/platform/linux64x86/bin")
+]]
+#[["lib/mosek/9.1/tools/platform/linux64x86/h/*.h"]]
+file(GLOB mosek_src
+        "")
+add_executable(lptml_cuda main.cu ${mosek_src} lib/csv.h lib/lptml.cuh lib/utils.h lib/lptml.h lib/types.h lib/cuda_wrapper.cuh)

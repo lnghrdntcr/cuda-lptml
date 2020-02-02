@@ -12,11 +12,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5be44cd5-b2de-4eec-8580-735eadfeb485" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lptml.cuh" beforeDir="false" afterPath="$PROJECT_DIR$/lib/lptml.cuh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/lptml.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/lptml.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cu" beforeDir="false" afterPath="$PROJECT_DIR$/main.cu" afterDir="false" />
@@ -85,7 +82,11 @@
       <workItem from="1580189966360" duration="599000" />
       <workItem from="1580208735421" duration="750000" />
       <workItem from="1580259822460" duration="6049000" />
-      <workItem from="1580410602483" duration="2624000" />
+      <workItem from="1580410602483" duration="4899000" />
+      <workItem from="1580422705576" duration="6867000" />
+      <workItem from="1580493403039" duration="1809000" />
+      <workItem from="1580519190698" duration="2478000" />
+      <workItem from="1580679817569" duration="120000" />
     </task>
     <servers />
   </component>

@@ -12,7 +12,16 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <functional>
+#include <algorithm>
 
+
+
+
+#include "mosek/9.1/tools/platform/linux64x86/h/fusion.h"
+#include "mosek/9.1/tools/platform/linux64x86/h/mosek.h"
+using namespace mosek::fusion;
+using namespace monty;
 
 
 unsigned_type count_single_constraint(
@@ -42,7 +51,7 @@ std::pair<unsigned_type, unsigned_type> count_violated_constraints_SD(
 
     srand(time(0));
 
-    // TODO: create 2 threads to count violated constraints between S and D
+    // Create 2 threads to count violated constraints between S and D
     auto constraints = cuda_count_violated_constraints_SD(S, D, G, u, l);
     const unsigned_type n = S.size() + D.size();
 
@@ -355,6 +364,24 @@ void maximal_violation(
     key_ret = key;
 }
 
+void semidefsolver(
+        h_prime_type H,
+        float_type u,
+        float_type l
+        ) {
+
+        auto it_s = H.find("S");
+        auto it_d = H.find("D");
+
+        if(it_s == H.end() || it_d == H.end()) {
+            return; // an empty set somehow
+        }
+
+        unsigned_type d = H["S"][0].first.size();
+        //Model::t M = new Model("Basic Markowitz"); auto _M = finally([&]() { M->dispose(); });
+
+}
+
 void pivot_LPType(
         h_prime_type B,
         h_prime_type C,
@@ -399,9 +426,9 @@ void pivot_LPType(
         Buc[key].push_back(c);
 
         // Calculate the cost of the new candidate basis and the cost of the current basis
+        semidefsolver(Bh, u, l);
 
-
-}
+    }
 
 
 }
@@ -415,6 +442,7 @@ matrix_type learn_metric (
         matrix_type initial_solution = matrix_type(),
         const bool DEBUG = true
 ){
+
     const unsigned_type dimension = get_dimension(D, S);
     const unsigned_type n         =  D.size() + S.size();
 
@@ -455,7 +483,7 @@ matrix_type learn_metric (
 }
 
 
-void fit(
+matrix_type fit(
         const matrix_type x,                          // Dataset
         const label_row_type y,                       // Labels
         const float_type u,                           // Upper bound
@@ -483,12 +511,83 @@ void fit(
         std::cout << "Number of constraints: d = " << dissimilar_pairs_D.size() << " s = " << similar_pairs_S.size()
                   << std::endl;
     }
-
+    // TODO: Figure out a way to make MOSEK work
     learn_metric(similar_pairs_S, dissimilar_pairs_D, u, l, 2000, initial_solution);
-
+    return identity(x.size());
 }
 
-void predict() {
+template <typename DistFnType, unsigned_type N_LABELS = 3>
+label_row_type knn(
+        const matrix_type x_train,
+        const label_row_type y_train,
+        const matrix_type x_test,
+        const unsigned_type num_neighbours,
+        const DistFnType distance
+        ) {
+
+    label_row_type res;
+
+    for (int i = 0; i < x_test.size(); ++i) {
+        auto test_row = x_test[i];
+        std::vector<std::pair<unsigned_type, float_type>> index_distances;
+
+        // compute the distance between the element and all points in the dataset
+        for (int j = 0; j < x_train.size(); ++j) {
+            auto train_row = x_train[i];
+            index_distances.push_back(std::make_pair(j, distance(test_row, train_row)));
+        }
+
+        std::sort(index_distances.begin(), index_distances.end(), [](std::pair<unsigned_type, float_type> cur, std::pair<unsigned_type, float_type> next) {
+            return cur.second < next.second;
+        });
+
+        index_distances.resize(num_neighbours);
+
+        std::vector<int> mode_count(N_LABELS, 0);
+
+        for(int j = 0; j < num_neighbours; ++j){
+            int nearest_index = index_distances[j].first;
+            mode_count[y_train[nearest_index]]++;
+        }
+
+        int highest_index = 0;
+        for(int j = 0; j < mode_count.size(); ++j){
+            if(mode_count[j] > mode_count[highest_index]) highest_index = j;
+        }
+
+        res.push_back(highest_index);
+
+    }
+    
+    return res;
+}
+
+float_type predict(
+        const matrix_type x_train,
+        const label_row_type y_train,
+        const matrix_type x_test,
+        const label_row_type y_test
+        ) {
+
+    auto results = knn(x_train, y_train, x_test, 3, [](row_type a, row_type b) -> float_type {
+        float_type acc = 0.0;
+        for(int i = 0; i < a.size();++i){
+            float_type tmp = a[i] - b[i];
+            tmp *= tmp;
+            tmp = sqrt(tmp);
+            acc += tmp;
+        }
+        return acc;
+    });
+
+    int errs = 0;
+    for(int i = 0; i < results.size(); ++i) {
+        int result = results[i];
+        int test = y_test[i];
+        if(results[i] != y_test[i]) errs ++;
+    }
+
+    return 1 - (float_type) errs / results.size();
 
 }
 
