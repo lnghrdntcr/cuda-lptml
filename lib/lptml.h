@@ -417,9 +417,18 @@ matrix_type semidefsolver(
         M->objective( ObjectiveSense::Minimize, 0);
         try {
             M->solve();
-        } catch(std::exception&){
-
-            return matrix_type()
+            std::cout << "Solved" << std::endl;
+            auto sol = *(A->level());
+            matrix_type matrix_sol(d, row_type(d, 0));
+            for(int row = 0; row < d; ++row) {
+                for(int col = 0; col < d; ++col) {
+                    matrix_sol[row][col] = sol[row * d + col];
+                }
+            }
+            return matrix_sol;
+        } catch(std::exception& e){
+            std::cout << e.what() << std::endl;
+            return matrix_type();
 
         }
 }
@@ -428,13 +437,37 @@ float_type cost_fn(matrix_type A) {
     if(A.size() == 0) return -RAND_MAX;
     unsigned_type d = A.size();
     auto ei = get_rand_vector_r(d);
-    // TODO: W = np.transpose(ei) * A * ei
-    // TODO: w = np.sum(W)
-    return -2.23;
+
+    auto right = cpu_mmult(A, ei);
+    float_type acc = 0.0;
+    for(int i = 0; i < right.size(); ++i) acc += right[i] * ei[i];
+
+    return acc;
 }
 
-void pivot_LPType(
+std::pair<h_prime_type, float_type> compBasis (
         h_prime_type B,
+        float_type cost,
+        float_type u,
+        float_type l,
+        unsigned_type d
+        ) {
+    unsigned_type len_constraints = B["S"].size() + B["D"].size();
+    if(len_constraints > d * d) {
+        // This should return all possible combinations of length len_constraints - 1
+        //auto combin = combinations(0, B["S"].size(), 0, B["D"].size());
+        /*for(auto c: combin) {
+            h_prime_type t;
+            t["S"].push_back(B["S"][c.first])
+            t["D"].push_back(B["D"][c.second])
+        }*/
+    }
+
+    return std::make_pair(B, cost);
+}
+
+std::pair<h_prime_type, matrix_type> pivot_LPType(
+        h_prime_type &B,
         h_prime_type C,
         float_type u,
         float_type l,
@@ -478,35 +511,42 @@ void pivot_LPType(
 
         // Calculate the cost of the new candidate basis and the cost of the current basis
         auto ABh = semidefsolver(Bh, u, l);
-        if(ABh.size() == 0) return std::make_pair(matrix_type(), matrix_type());
+        if(ABh.size() == 0) return std::make_pair(h_prime_type(), matrix_type());
 
         float_type Bh_cost = cost_fn(ABh);
+        std::cout << "cost is = " << Bh_cost << std::endl;
         float_type B_cost = 0.0;
         if(calculate_basis_cost) {
             A = semidefsolver(B, u, l);
-            if(ABh.size() == 0) return std::make_pair(matrix_type(), matrix_type());
+            // if(A.size() == 0) return std::make_pair(matrix_type(), matrix_type());
             B_cost = cost_fn(A);
+            std::cout << "cost of basis = " << B_cost << std::endl;
         } else {
             B_cost = current_basis_cost;
         }
 
-/*if Bh_cost > B_cost:
-T, z = compBasis(Bh, Bh_cost, u, l, d)
+        if(Bh_cost > B_cost){
+            // TODO; finish implementing compBasis
+            continue;
+            auto tz = compBasis(Bh, Bh_cost, u, l, d);
+            auto T = tz.first;
+            auto z = tz.second;
 
-B, A = pivot_LPType(T, Buc, u, l, d, Bh_cost, True, ABh)
-if A == []:
-return [], []
-break
+            auto BA = pivot_LPType(T, Buc, u, l, d, Bh_cost, true, ABh);
+            B = BA.first;
+            A = BA.second;
 
-calculate_basis_cost = False
-current_basis_cost = w(A)
-else:
-calculate_basis_cost = False
-current_basis_cost = B_cost*/
+            if(A.size() == 0) return std::make_pair(h_prime_type(), matrix_type());
+            calculate_basis_cost = false;
+            current_basis_cost = cost_fn(A);
+
+        } else  {
+            calculate_basis_cost = false;
+            current_basis_cost = B_cost;
+        }
 
     }
-
-
+    return std::make_pair(B, A);
 }
 
 matrix_type learn_metric (
@@ -531,9 +571,13 @@ matrix_type learn_metric (
     auto viol_d = violated_constraints.first;
     auto viol_s = violated_constraints.second;
 
+    unsigned_type max_best_solution_d = 0;
+    unsigned_type max_best_solution_s = 0;
+    matrix_type best_A = identity(dimension);
+
     const unsigned_type initial_violation_count = viol_d + viol_s;
 
-    for(int i = 0; i < t; ++i){
+    for(int i = 0; i < t; ++i) {
         float exponent = -1 * (rand() % ((int) log2(n)) + 3);
         float p = pow(2.0, exponent);
 
@@ -550,11 +594,25 @@ matrix_type learn_metric (
         R = initial_sort(R, initial_solution, u, l);
 
         //TODO: pivot_LP_TYPE
-        pivot_LPType(B0, R, u, l, dimension, 0, false, matrix_type());
-        //if(DEBUG) std::cout << "R_COUNT = " << r_count << std::endl;
+        auto BnA = pivot_LPType(B0, R, u, l, dimension, 0, false, matrix_type());
+        auto Bm = BnA.first;
+        auto A = BnA.second;
+
+        auto violated_constraints = count_violated_constraints_SD(S, D, cholesky_transformer(A), u, l);
+        unsigned_type violated_constraints_d = violated_constraints.first;
+        unsigned_type violated_constraints_s = violated_constraints.second;
+
+        if((max_best_solution_d + max_best_solution_s) >= (violated_constraints_d + violated_constraints_s)){
+            best_A = A;
+            max_best_solution_d = violated_constraints_d;
+            max_best_solution_s = violated_constraints_s;
+        }
+
+        if(violated_constraints_d + violated_constraints_s == 0) break;
+
     }
 
-    return initial_solution;
+    return best_A;
 }
 
 

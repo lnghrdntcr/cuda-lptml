@@ -37,6 +37,7 @@ pair_index_type combinations(unsigned_type begin, unsigned_type end) {
     }
     return res;
 }
+
 template <typename T>
 T percentile(std::vector<T> data, unsigned_type percentile_value, const size_t DIM) {
     int index = ((float) percentile_value / 100 * DIM) + 1;
