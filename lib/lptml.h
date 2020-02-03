@@ -20,6 +20,7 @@
 
 #include "mosek/9.1/tools/platform/linux64x86/h/fusion.h"
 #include "mosek/9.1/tools/platform/linux64x86/h/mosek.h"
+
 using namespace mosek::fusion;
 using namespace monty;
 
@@ -291,7 +292,7 @@ void maximal_violation(
 
     std::thread s([&worst_index_S, &worst_value_S, &constraints, &G, u, &idx_S, skip, &empty_S](){
         auto it_s = constraints.find("S");
-        if(it_s == constraints.end()) {
+        if(it_s == constraints.end() || it_s->second.size() == 0) {
             empty_S = true;
             return;
         }
@@ -318,7 +319,7 @@ void maximal_violation(
 
     std::thread d([&worst_index_D, &worst_value_D, &constraints, &G, l, &idx_D, skip, &empty_D](){
         auto it_s = constraints.find("D");
-        if(it_s == constraints.end()) {
+        if(it_s == constraints.end() || it_s->second.size() == 0) {
             empty_D = true;
             return;
         }
@@ -348,7 +349,7 @@ void maximal_violation(
     float_type worst_index;
     float_type worst_value;
     std::string key = "";
-    if((empty_D  && !empty_S) || worst_value_S <= worst_value_D) {
+    if((empty_D  && !empty_S) && worst_value_S <= worst_value_D) {
         worst_index = worst_index_S;
         worst_value = worst_value_S;
         key = "S";
@@ -364,7 +365,7 @@ void maximal_violation(
     key_ret = key;
 }
 
-void semidefsolver(
+matrix_type semidefsolver(
         h_prime_type H,
         float_type u,
         float_type l
@@ -374,12 +375,62 @@ void semidefsolver(
         auto it_d = H.find("D");
 
         if(it_s == H.end() || it_d == H.end()) {
-            return; // an empty set somehow
+            return matrix_type(); // an empty set somehow
         }
 
         unsigned_type d = H["S"][0].first.size();
-        //Model::t M = new Model("Basic Markowitz"); auto _M = finally([&]() { M->dispose(); });
+        std::cout << "Dimension "  << d << std::endl;
 
+        Model::t M = new Model();
+        Variable::t A = M->variable("A", Domain::inPSDCone(d));
+
+        for(auto constraint: it_s -> second) {
+            auto i = constraint.first;
+            auto j = constraint.second;
+
+            std::vector<double> sub(i.size());
+
+            for(int ii = 0; ii < i.size(); ++ii) {
+                sub[ii] = i[ii] - j[ii];
+            }
+
+            auto sub_ptr = new_array_ptr<double, 1>(sub.size());
+            std::copy(sub.begin(), sub.end(), sub_ptr->begin());
+            M->constraint(Expr::mulElm(sub_ptr, Expr::mul(A, sub_ptr)), Domain::lessThan(u * u));
+        }
+
+        for(auto constraint: it_d -> second) {
+            auto i = constraint.first;
+            auto j = constraint.second;
+
+            std::vector<double> sub(i.size());
+
+            for(int ii = 0; ii < i.size(); ++ii) {
+                sub[ii] = i[ii] - j[ii];
+            }
+
+            auto sub_ptr = new_array_ptr<double, 1>(sub.size());
+            std::copy(sub.begin(), sub.end(), sub_ptr->begin());
+            M->constraint(Expr::mulElm(sub_ptr, Expr::mul(A, sub_ptr)), Domain::greaterThan(l * l));
+        }
+
+        M->objective( ObjectiveSense::Minimize, 0);
+        try {
+            M->solve();
+        } catch(std::exception&){
+
+            return matrix_type()
+
+        }
+}
+
+float_type cost_fn(matrix_type A) {
+    if(A.size() == 0) return -RAND_MAX;
+    unsigned_type d = A.size();
+    auto ei = get_rand_vector_r(d);
+    // TODO: W = np.transpose(ei) * A * ei
+    // TODO: w = np.sum(W)
+    return -2.23;
 }
 
 void pivot_LPType(
@@ -426,7 +477,32 @@ void pivot_LPType(
         Buc[key].push_back(c);
 
         // Calculate the cost of the new candidate basis and the cost of the current basis
-        semidefsolver(Bh, u, l);
+        auto ABh = semidefsolver(Bh, u, l);
+        if(ABh.size() == 0) return std::make_pair(matrix_type(), matrix_type());
+
+        float_type Bh_cost = cost_fn(ABh);
+        float_type B_cost = 0.0;
+        if(calculate_basis_cost) {
+            A = semidefsolver(B, u, l);
+            if(ABh.size() == 0) return std::make_pair(matrix_type(), matrix_type());
+            B_cost = cost_fn(A);
+        } else {
+            B_cost = current_basis_cost;
+        }
+
+/*if Bh_cost > B_cost:
+T, z = compBasis(Bh, Bh_cost, u, l, d)
+
+B, A = pivot_LPType(T, Buc, u, l, d, Bh_cost, True, ABh)
+if A == []:
+return [], []
+break
+
+calculate_basis_cost = False
+current_basis_cost = w(A)
+else:
+calculate_basis_cost = False
+current_basis_cost = B_cost*/
 
     }
 
@@ -442,7 +518,6 @@ matrix_type learn_metric (
         matrix_type initial_solution = matrix_type(),
         const bool DEBUG = true
 ){
-
     const unsigned_type dimension = get_dimension(D, S);
     const unsigned_type n         =  D.size() + S.size();
 
