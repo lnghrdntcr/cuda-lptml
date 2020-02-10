@@ -7,7 +7,7 @@
 #include "lib/lptml.h"
 #include "lib/cuda_wrapper.cuh"
 #define IRIS_PATH "/home/francesco/CLionProjects/lptml/datasets/iris.csv"
-#define ITERATIONS 2000
+#define ITERATIONS 200
 #define NUM_TESTS 10
 
 int main() {

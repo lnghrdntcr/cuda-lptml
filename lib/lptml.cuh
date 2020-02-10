@@ -14,7 +14,7 @@ T l2norm(T *row1, T *row2){
     T acc = 0.0;
     for (int i = 0; i<column_count; ++i) {
         T tmp = (row1[i] - row2[i]);
-        acc += tmp *tmp;
+        acc += tmp * tmp;
     }
     return sqrt(acc);
 }

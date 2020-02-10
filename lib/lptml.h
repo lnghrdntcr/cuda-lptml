@@ -15,9 +15,6 @@
 #include <functional>
 #include <algorithm>
 
-
-
-
 #include "mosek/9.1/tools/platform/linux64x86/h/fusion.h"
 #include "mosek/9.1/tools/platform/linux64x86/h/mosek.h"
 
@@ -46,8 +43,8 @@ std::pair<unsigned_type, unsigned_type> count_violated_constraints_SD(
                                                                      matrix_type G,
                                                                      float_type u,
                                                                      float_type l,
-                                                                     unsigned_type iterations = 2000,
-                                                                     const bool DEBUG = true
+                                                                     unsigned_type iterations = 200,
+                                                                     const bool DEBUG = false
 ){
 
     srand(time(0));
@@ -368,7 +365,8 @@ void maximal_violation(
 matrix_type semidefsolver(
         h_prime_type H,
         float_type u,
-        float_type l
+        float_type l,
+        const bool DEBUG = false
         ) {
 
         auto it_s = H.find("S");
@@ -379,7 +377,7 @@ matrix_type semidefsolver(
         }
 
         unsigned_type d = H["S"][0].first.size();
-        std::cout << "Dimension "  << d << std::endl;
+        if(DEBUG) std::cout << "Dimension "  << d << std::endl;
 
         Model::t M = new Model();
         Variable::t A = M->variable("A", Domain::inPSDCone(d));
@@ -417,7 +415,10 @@ matrix_type semidefsolver(
         M->objective( ObjectiveSense::Minimize, 0);
         try {
             M->solve();
-            std::cout << "Solved" << std::endl;
+
+            if(M->getPrimalSolutionStatus() != SolutionStatus::Optimal) return identity(d);
+
+            if(DEBUG) std::cout << "Solved" << std::endl;
             auto sol = *(A->level());
             matrix_type matrix_sol(d, row_type(d, 0));
             for(int row = 0; row < d; ++row) {
@@ -455,12 +456,41 @@ std::pair<h_prime_type, float_type> compBasis (
     unsigned_type len_constraints = B["S"].size() + B["D"].size();
     if(len_constraints > d * d) {
         // This should return all possible combinations of length len_constraints - 1
-        //auto combin = combinations(0, B["S"].size(), 0, B["D"].size());
-        /*for(auto c: combin) {
-            h_prime_type t;
-            t["S"].push_back(B["S"][c.first])
-            t["D"].push_back(B["D"][c.second])
-        }*/
+        // Meaning that i need to iterate among all constraints and remove one at the time
+
+        for(unsigned_type i = 0; i < len_constraints; ++i){
+            // Try to remove the i-th constraint in S / D
+            // -> Copy all elements of vector skipping the i-th index
+            std::vector<constraint_type> slice;
+            h_prime_type tmp_B;
+
+            int cur_idx = (B["S"].size() >= i ? (len_constraints - B["S"].size()) : i);
+            bool in_s   = (B["S"].size() < i);
+
+            if(in_s) {
+                slice = B["S"];
+                slice.erase(slice.begin() + cur_idx);
+                tmp_B["S"] = slice;
+                tmp_B["D"] = B["D"];
+            } else {
+                slice = B["D"];
+                slice.erase(slice.begin() + cur_idx);
+                tmp_B["D"] = slice;
+                tmp_B["S"] = B["S"];
+            }
+
+            auto A = semidefsolver(tmp_B, u, l);
+            auto cost_1 = cost_fn(A);
+
+            if(cost_1 >= cost) {
+                auto new_results = compBasis(tmp_B, cost_1, u, l, d);
+                auto A2 = semidefsolver(new_results.first, u, l);
+                auto cost_2 = cost_fn(A2);
+
+                if(cost_2 >= cost_1) return std::make_pair(new_results.first, cost_2);
+                else return std::make_pair(tmp_B, cost_1);
+            }
+        }
     }
 
     return std::make_pair(B, cost);
@@ -475,7 +505,7 @@ std::pair<h_prime_type, matrix_type> pivot_LPType(
         unsigned_type last_cost,
         bool use_last_cost,
         matrix_type basis_A,
-        const bool DEBUG = true
+        const bool DEBUG = false
     ){
 
     bool calculate_basis_cost = !use_last_cost;
@@ -514,11 +544,13 @@ std::pair<h_prime_type, matrix_type> pivot_LPType(
         if(ABh.size() == 0) return std::make_pair(h_prime_type(), matrix_type());
 
         float_type Bh_cost = cost_fn(ABh);
-        std::cout << "cost is = " << Bh_cost << std::endl;
+
+        if(DEBUG) std::cout << "cost is = " << Bh_cost << std::endl;
+
         float_type B_cost = 0.0;
         if(calculate_basis_cost) {
             A = semidefsolver(B, u, l);
-            // if(A.size() == 0) return std::make_pair(matrix_type(), matrix_type());
+            if(A.size() == 0) return std::make_pair(h_prime_type(), matrix_type());
             B_cost = cost_fn(A);
             std::cout << "cost of basis = " << B_cost << std::endl;
         } else {
@@ -526,8 +558,7 @@ std::pair<h_prime_type, matrix_type> pivot_LPType(
         }
 
         if(Bh_cost > B_cost){
-            // TODO; finish implementing compBasis
-            continue;
+
             auto tz = compBasis(Bh, Bh_cost, u, l, d);
             auto T = tz.first;
             auto z = tz.second;
@@ -556,7 +587,7 @@ matrix_type learn_metric (
         float_type l,
         unsigned_type t,
         matrix_type initial_solution = matrix_type(),
-        const bool DEBUG = true
+        const bool DEBUG = false
 ){
     const unsigned_type dimension = get_dimension(D, S);
     const unsigned_type n         =  D.size() + S.size();
@@ -571,13 +602,16 @@ matrix_type learn_metric (
     auto viol_d = violated_constraints.first;
     auto viol_s = violated_constraints.second;
 
-    unsigned_type max_best_solution_d = 0;
-    unsigned_type max_best_solution_s = 0;
+    unsigned_type max_best_solution_d = viol_d;
+    unsigned_type max_best_solution_s = viol_s;
     matrix_type best_A = identity(dimension);
 
     const unsigned_type initial_violation_count = viol_d + viol_s;
 
     for(int i = 0; i < t; ++i) {
+
+        if(DEBUG) std::cout << "\r=========================ITERATION: " << i << "=========================" << std::endl;
+
         float exponent = -1 * (rand() % ((int) log2(n)) + 3);
         float p = pow(2.0, exponent);
 
@@ -625,7 +659,7 @@ matrix_type fit(
         const size_t DIM_X,                           // Number of features
         const pair_index_type all_pairs,              // Combinations of all pairs in the dataset
         matrix_type initial_solution = matrix_type(), // Initial solution
-        const bool DEBUG = true
+        const bool DEBUG = false
 ) {
     pair_type similar_pairs_S;
     pair_type dissimilar_pairs_D;
@@ -645,8 +679,8 @@ matrix_type fit(
                   << std::endl;
     }
     // TODO: Figure out a way to make MOSEK work
-    learn_metric(similar_pairs_S, dissimilar_pairs_D, u, l, 2000, initial_solution);
-    return identity(x.size());
+    auto new_G = learn_metric(similar_pairs_S, dissimilar_pairs_D, u, l, 20, initial_solution);
+    return new_G;
 }
 
 template <typename DistFnType, unsigned_type N_LABELS = 3>

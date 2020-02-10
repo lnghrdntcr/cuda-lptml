@@ -119,7 +119,7 @@ void train_test_split(
         std::vector<T> x,
         std::vector<R> y,
         const float_type factor = 0.25,
-        const bool DEBUG = true
+        const bool DEBUG = false
         ){
 
     const unsigned_type split_rateo = (float) 1 / factor;

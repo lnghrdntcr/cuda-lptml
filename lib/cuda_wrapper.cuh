@@ -79,15 +79,6 @@ std::pair<unsigned_type, unsigned_type> cuda_reduce_violated_constraints(
     cudaStreamSynchronize(stream_S);
     cudaStreamSynchronize(stream_D);
 
-/*    CUDA_CHECK_ERROR(
-            cudaMemcpy(d_count.data(), d_distance_bitmap_D, sizeof(unsigned_type) * size_d, cudaMemcpyDeviceToHost));
-    CUDA_CHECK_ERROR(
-            cudaMemcpy(s_count.data(), d_distance_bitmap_S, sizeof(unsigned_type) * size_s, cudaMemcpyDeviceToHost));
-
-    for (int i = 0; i < size_d; ++i) {
-        std::cout << "i = " << i << " bmp = " << d_count[i] << std::endl;
-    }*/
-
     reduce << < BLOCKS, size_s / 2, 0, stream_S >> > (d_distance_bitmap_S);
     reduce << < BLOCKS, size_d / 2, 0, stream_D >> > (d_distance_bitmap_D);
 
@@ -103,10 +94,10 @@ std::pair<unsigned_type, unsigned_type> cuda_reduce_violated_constraints(
 std::pair<unsigned_type, unsigned_type> cuda_count_violated_constraints_SD(
         const pair_type S,
         const pair_type D,
-        const matrix_type G,
+        matrix_type &G,
         const float_type u,
         const float_type l,
-        const bool DEBUG = true
+        const bool DEBUG = false
     ){
 
     float_type *d_unwrapped_S;
@@ -122,6 +113,8 @@ std::pair<unsigned_type, unsigned_type> cuda_count_violated_constraints_SD(
     cudaStreamCreate(&stream_S);
     cudaStreamCreate(&stream_D);
     cudaStreamCreate(&stream_G);
+
+    if (G.size() == 0) G = identity(4);
 
     auto unwrapped_S = unwrap_constraint<float_type>(S);
     auto unwrapped_D = unwrap_constraint<float_type>(D);
@@ -160,8 +153,10 @@ std::pair<unsigned_type, unsigned_type> cuda_count_violated_constraints_SD(
     CUDA_CHECK_ERROR(cudaFree(d_unwrapped_D));
     CUDA_CHECK_ERROR(cudaFree(d_unwrapped_S));
     CUDA_CHECK_ERROR(cudaFree(d_unwrapped_G));
+    CUDA_CHECK_ERROR(cudaFree(d_distance_bitmap_S));
+    CUDA_CHECK_ERROR(cudaFree(d_distance_bitmap_D));
 
-    if(DEBUG){
+if(DEBUG){
         std::cout << "Size S = " << unwrapped_S.size()<< "\nSize D = " << unwrapped_D.size()<<std::endl;
     }
     return count;
