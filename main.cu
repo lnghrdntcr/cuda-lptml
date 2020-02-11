@@ -42,11 +42,14 @@ int main() {
     std::vector<float_type> accuracies;
 
     for (int i = 0; i < NUM_TESTS; ++i) {
+        std::cout << "Test: " << i + 1 << std::endl;
         train_test_split(&x_train, &x_test, &y_train, &y_test, dataset, labels);
 
         auto G = fit(x_train, y_train, u, l, DIM_Y, DIM_X, combinations(0, x_train.size()));
-        auto x_train_lptml = cpu_mmult(G, x_train);
-        auto accuracy = predict(x_train_lptml, y_train, x_test, y_test);
+        auto x_train_lptml = transpose(cpu_mmult(G, transpose(x_train)));
+        auto x_test_lptml = transpose(cpu_mmult(G, transpose(x_test)));
+        auto accuracy = predict(x_train_lptml, y_train, x_test_lptml, y_test);
+
         accuracies.push_back(accuracy);
         x_train.clear();
         x_test.clear();

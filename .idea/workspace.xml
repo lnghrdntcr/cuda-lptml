@@ -12,12 +12,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5be44cd5-b2de-4eec-8580-735eadfeb485" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/cuda_wrapper.cuh" beforeDir="false" afterPath="$PROJECT_DIR$/lib/cuda_wrapper.cuh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lptml.cuh" beforeDir="false" afterPath="$PROJECT_DIR$/lib/lptml.cuh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/lptml.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/lptml.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/types.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/types.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cu" beforeDir="false" afterPath="$PROJECT_DIR$/main.cu" afterDir="false" />
     </list>
@@ -84,7 +81,8 @@
       <workItem from="1580679817569" duration="21728000" />
       <workItem from="1581192568625" duration="84000" />
       <workItem from="1581287603815" duration="401000" />
-      <workItem from="1581288013873" duration="6386000" />
+      <workItem from="1581288013873" duration="7175000" />
+      <workItem from="1581454345907" duration="7037000" />
     </task>
     <servers />
   </component>
@@ -114,78 +112,68 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="1117" y="256" width="628" height="534" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1581287618946" />
-    <state width="1848" height="94" key="GridCell.Tab.0.bottom" timestamp="1581294316192">
+    <state width="1848" height="456" key="GridCell.Tab.0.bottom" timestamp="1581461384750">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="94" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1581294316192" />
-    <state width="1848" height="94" key="GridCell.Tab.0.center" timestamp="1581294316191">
+    <state width="1848" height="456" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1581461384750" />
+    <state width="1848" height="456" key="GridCell.Tab.0.center" timestamp="1581461384749">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="94" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1581294316191" />
-    <state width="1848" height="94" key="GridCell.Tab.0.left" timestamp="1581294316191">
+    <state width="1848" height="456" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1581461384749" />
+    <state width="1848" height="456" key="GridCell.Tab.0.left" timestamp="1581461384749">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="94" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1581294316191" />
-    <state width="1848" height="94" key="GridCell.Tab.0.right" timestamp="1581294316191">
+    <state width="1848" height="456" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1581461384749" />
+    <state width="1848" height="456" key="GridCell.Tab.0.right" timestamp="1581461384749">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="94" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1581294316191" />
-    <state width="1848" height="94" key="GridCell.Tab.1.bottom" timestamp="1581294317048">
+    <state width="1848" height="456" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1581461384749" />
+    <state width="1848" height="456" key="GridCell.Tab.1.bottom" timestamp="1581461384750">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="94" key="GridCell.Tab.1.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1581294317048" />
-    <state width="1848" height="94" key="GridCell.Tab.1.center" timestamp="1581294317048">
+    <state width="1848" height="456" key="GridCell.Tab.1.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1581461384750" />
+    <state width="1848" height="456" key="GridCell.Tab.1.center" timestamp="1581461384750">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="94" key="GridCell.Tab.1.center/0.0.1920.1080@0.0.1920.1080" timestamp="1581294317048" />
-    <state width="1848" height="94" key="GridCell.Tab.1.left" timestamp="1581294317048">
+    <state width="1848" height="456" key="GridCell.Tab.1.center/0.0.1920.1080@0.0.1920.1080" timestamp="1581461384750" />
+    <state width="1848" height="456" key="GridCell.Tab.1.left" timestamp="1581461384750">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="94" key="GridCell.Tab.1.left/0.0.1920.1080@0.0.1920.1080" timestamp="1581294317048" />
-    <state width="1848" height="94" key="GridCell.Tab.1.right" timestamp="1581294317048">
+    <state width="1848" height="456" key="GridCell.Tab.1.left/0.0.1920.1080@0.0.1920.1080" timestamp="1581461384750" />
+    <state width="1848" height="456" key="GridCell.Tab.1.right" timestamp="1581461384750">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="94" key="GridCell.Tab.1.right/0.0.1920.1080@0.0.1920.1080" timestamp="1581294317048" />
+    <state width="1848" height="456" key="GridCell.Tab.1.right/0.0.1920.1080@0.0.1920.1080" timestamp="1581461384750" />
     <state x="954" y="163" key="SettingsEditor" timestamp="1581287639805">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="954" y="163" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1581287639805" />
-    <state x="557" y="261" width="805" height="570" key="find.popup" timestamp="1581294049766">
+    <state x="557" y="261" width="805" height="570" key="find.popup" timestamp="1581461284162">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="557" y="261" width="805" height="570" key="find.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1581294049765" />
-    <state x="616" y="253" width="685" height="678" key="search.everywhere.popup" timestamp="1581289135581">
+    <state x="557" y="261" width="805" height="570" key="find.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1581461284162" />
+    <state x="616" y="253" width="685" height="678" key="search.everywhere.popup" timestamp="1581456690260">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="616" y="253" width="685" height="678" key="search.everywhere.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1581289135581" />
+    <state x="616" y="253" width="685" height="678" key="search.everywhere.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1581456690260" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/main.cu</url>
-          <line>47</line>
-          <option name="timeStamp" value="5" />
+          <url>file://$PROJECT_DIR$/lib/lptml.h</url>
+          <line>214</line>
+          <option name="timeStamp" value="21" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/lib/lptml.h</url>
-          <line>682</line>
-          <option name="timeStamp" value="6" />
+          <url>file://$PROJECT_DIR$/lib/utils.h</url>
+          <line>253</line>
+          <option name="timeStamp" value="35" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/lib/lptml.h</url>
-          <line>647</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/lib/lptml.h</url>
-          <line>639</line>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/lib/lptml.h</url>
-          <line>636</line>
-          <option name="timeStamp" value="9" />
+          <url>file://$PROJECT_DIR$/lib/utils.h</url>
+          <line>240</line>
+          <option name="timeStamp" value="36" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

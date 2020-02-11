@@ -113,7 +113,7 @@ std::pair<h_prime_type, unsigned_type> subsample (
             }
         }
     }
-return std::make_pair(H_prime, s_count + d_count);
+    return std::make_pair(H_prime, s_count + d_count);
 }
 
 h_prime_type calculate_initial_basis(
@@ -231,6 +231,40 @@ std::vector<constraint_type> unit_get_permutation(
     return c_prime_proj;
 }
 
+unrolled_h_prime_type unroll_h_prime(
+        h_prime_type h_prime
+        ) {
+
+    unrolled_h_prime_type result;
+
+    bool s_skip = false;
+    bool d_skip = false;
+
+    auto it_s = h_prime.find("S");
+    auto it_d = h_prime.find("D");
+
+    if(it_s == h_prime.end()) s_skip = true;
+    if(it_d == h_prime.end()) d_skip = true;
+
+    if(s_skip && d_skip) return unrolled_h_prime_type();
+
+    if(!s_skip) {
+        for(auto c: it_s->second) {
+            result.push_back(std::make_pair(c, "S"));
+        }
+    }
+
+
+    if(!d_skip) {
+        for(auto c: it_d->second) {
+            result.push_back(std::make_pair(c, "D"));
+        }
+    }
+
+    return result;
+
+}
+
 h_prime_type get_permutation(
         h_prime_type B,
         h_prime_type C,
@@ -239,24 +273,24 @@ h_prime_type get_permutation(
 
     h_prime_type C_prime;
 
-    std::thread s([&B, &C, &C_prime]() {
-        auto s_constraints = (C.find("S") != C.end()) ? C.find("S")->second : std::vector<constraint_type>(0);
-        auto s_b_constraints = (B.find("S") != B.end()) ? B.find("S")->second : std::vector<constraint_type>(0);
-        auto c_prime_s_proj = unit_get_permutation(s_constraints, s_b_constraints);
-        C_prime["S"] = c_prime_s_proj;
-    });
+    //TODO: here
 
-    std::thread t([&B, &C, &C_prime]() {
-        auto d_constraints = (C.find("D") != C.end()) ? C.find("D")->second : std::vector<constraint_type>(0);
-        auto d_b_constraints = (B.find("D") != B.end()) ? B.find("D")->second : std::vector<constraint_type>(0);
-        auto c_prime_d_proj = unit_get_permutation(d_constraints, d_b_constraints);
-        C_prime["D"] = c_prime_d_proj;
-    });
+    unrolled_h_prime_type b_constraints = unroll_h_prime(B);
+    unrolled_h_prime_type c_constraints = unroll_h_prime(C);
 
-    s.join();
-    t.join();
-
-    if(DEBUG) std::cout << "Size: \n\tC_prime[\"S\"] = " << C_prime["S"].size() << "\n\tC_prime[\"D\"] = " << C_prime["S"].size()<< std::endl;
+    for(unsigned_type i = 0; i < c_constraints.size(); ++i){
+        bool exists_in_both = false;
+        for(unsigned_type j = 0; j < b_constraints.size(); ++j){
+            if(
+                (b_constraints[j].second == c_constraints[i].second) &&
+                deep_equal(b_constraints[j].first.first, c_constraints[i].first.first) &&
+                deep_equal(b_constraints[j].first.second, c_constraints[i].first.second)
+                ) {
+                exists_in_both = true;
+            }
+        }
+        if(!exists_in_both) C_prime[c_constraints[i].second].push_back(c_constraints[i].first);
+    }
 
     return C_prime;
 
@@ -284,7 +318,10 @@ void maximal_violation(
     bool empty_D = false;
     matrix_type G;
 
-    if(constraints.size() == 0) return;
+    if(constraints.size() == 0) {
+        e_ret = -1;
+        return;
+    }
     G = cholesky_transformer(A);
 
     std::thread s([&worst_index_S, &worst_value_S, &constraints, &G, u, &idx_S, skip, &empty_S](){
@@ -369,49 +406,65 @@ matrix_type semidefsolver(
         const bool DEBUG = false
         ) {
 
+        bool s_empty = false;
+        bool d_empty = false;
         auto it_s = H.find("S");
         auto it_d = H.find("D");
 
-        if(it_s == H.end() || it_d == H.end()) {
+        if(it_s == H.end()){
+            s_empty = true;
+        }
+
+
+        if(it_d == H.end()){
+            d_empty = true;
+        }
+
+        if(d_empty && s_empty) {
             return matrix_type(); // an empty set somehow
         }
 
-        unsigned_type d = H["S"][0].first.size();
+        unsigned_type d = 0;
+
+        if(d_empty) d = H["S"][0].first.size();
+        else d = H["D"][0].first.size();
+
         if(DEBUG) std::cout << "Dimension "  << d << std::endl;
 
         Model::t M = new Model();
         Variable::t A = M->variable("A", Domain::inPSDCone(d));
+        if(!s_empty){
+            for(auto constraint: it_s -> second) {
+                auto i = constraint.first;
+                auto j = constraint.second;
 
-        for(auto constraint: it_s -> second) {
-            auto i = constraint.first;
-            auto j = constraint.second;
+                std::vector<double> sub(i.size());
 
-            std::vector<double> sub(i.size());
+                for(int ii = 0; ii < i.size(); ++ii) {
+                    sub[ii] = i[ii] - j[ii];
+                }
 
-            for(int ii = 0; ii < i.size(); ++ii) {
-                sub[ii] = i[ii] - j[ii];
+                auto sub_ptr = new_array_ptr<double, 1>(sub.size());
+                std::copy(sub.begin(), sub.end(), sub_ptr->begin());
+                M->constraint(Expr::mulElm(sub_ptr, Expr::mul(A, sub_ptr)), Domain::lessThan(u * u));
             }
-
-            auto sub_ptr = new_array_ptr<double, 1>(sub.size());
-            std::copy(sub.begin(), sub.end(), sub_ptr->begin());
-            M->constraint(Expr::mulElm(sub_ptr, Expr::mul(A, sub_ptr)), Domain::lessThan(u * u));
         }
+        if(!d_empty){
+            for(auto constraint: it_d -> second) {
+                auto i = constraint.first;
+                auto j = constraint.second;
 
-        for(auto constraint: it_d -> second) {
-            auto i = constraint.first;
-            auto j = constraint.second;
+                std::vector<double> sub(i.size());
 
-            std::vector<double> sub(i.size());
+                for(int ii = 0; ii < i.size(); ++ii) {
+                    sub[ii] = i[ii] - j[ii];
+                }
 
-            for(int ii = 0; ii < i.size(); ++ii) {
-                sub[ii] = i[ii] - j[ii];
+                auto sub_ptr = new_array_ptr<double, 1>(sub.size());
+                std::copy(sub.begin(), sub.end(), sub_ptr->begin());
+                M->constraint(Expr::mulElm(sub_ptr, Expr::mul(A, sub_ptr)), Domain::greaterThan(l * l));
             }
-
-            auto sub_ptr = new_array_ptr<double, 1>(sub.size());
-            std::copy(sub.begin(), sub.end(), sub_ptr->begin());
-            M->constraint(Expr::mulElm(sub_ptr, Expr::mul(A, sub_ptr)), Domain::greaterThan(l * l));
         }
-
         M->objective( ObjectiveSense::Minimize, 0);
         try {
             M->solve();
@@ -552,7 +605,7 @@ std::pair<h_prime_type, matrix_type> pivot_LPType(
             A = semidefsolver(B, u, l);
             if(A.size() == 0) return std::make_pair(h_prime_type(), matrix_type());
             B_cost = cost_fn(A);
-            std::cout << "cost of basis = " << B_cost << std::endl;
+            if(DEBUG) std::cout << "cost of basis = " << B_cost << std::endl;
         } else {
             B_cost = current_basis_cost;
         }
@@ -610,7 +663,7 @@ matrix_type learn_metric (
 
     for(int i = 0; i < t; ++i) {
 
-        if(DEBUG) std::cout << "\r=========================ITERATION: " << i << "=========================" << std::endl;
+        if(DEBUG) std::cout << "=========================ITERATION: " << i << "=========================" << std::endl;
 
         float exponent = -1 * (rand() % ((int) log2(n)) + 3);
         float p = pow(2.0, exponent);
@@ -678,8 +731,7 @@ matrix_type fit(
         std::cout << "Number of constraints: d = " << dissimilar_pairs_D.size() << " s = " << similar_pairs_S.size()
                   << std::endl;
     }
-    // TODO: Figure out a way to make MOSEK work
-    auto new_G = learn_metric(similar_pairs_S, dissimilar_pairs_D, u, l, 20, initial_solution);
+    auto new_G = learn_metric(similar_pairs_S, dissimilar_pairs_D, u, l, 2000, initial_solution);
     return new_G;
 }
 

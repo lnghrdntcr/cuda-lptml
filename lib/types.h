@@ -20,6 +20,7 @@
 #define pair_index_type std::vector<std::pair<unsigned_type, unsigned_type>>
 
 #define h_prime_type std::map<std::string, std::vector<constraint_type>>
+#define unrolled_h_prime_type std::vector<std::pair<constraint_type,std::string>>
 
 float_type as_float_type(float el){
     return *(float_type *) (&el);

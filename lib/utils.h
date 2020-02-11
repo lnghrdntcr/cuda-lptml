@@ -12,6 +12,7 @@
 #include "types.h"
 #include <cstdlib>
 #include <ctime>
+#include <cassert>
 
 pair_index_type combinations(unsigned_type begin, unsigned_type end) {
     // Res must be of (end - begin) * (end - begin - 1)
@@ -224,8 +225,22 @@ row_type cpu_mmult(matrix_type A, row_type x){
     return ret;
 }
 
+matrix_type transpose(
+        matrix_type x
+        ) {
+    matrix_type ret(x[0].size(), row_type(x.size(), 0));
+    for(int i = 0; i < x.size(); ++i)
+        for (int j = 0; j < x[i].size(); ++j)
+            ret[j][i] = x[i][j];
+
+    return ret;
+}
+
 matrix_type cpu_mmult(matrix_type A, matrix_type B){
 
+
+
+    assert(A[0].size() == B.size());
     matrix_type ret(A.size(), row_type(B[0].size(), 0));
 
     for (unsigned_type i = 0; i < A.size(); i++) {
