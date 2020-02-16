@@ -680,7 +680,6 @@ matrix_type learn_metric (
         // Initial solution is also best_A
         R = initial_sort(R, initial_solution, u, l);
 
-        //TODO: pivot_LP_TYPE
         auto BnA = pivot_LPType(B0, R, u, l, dimension, 0, false, matrix_type());
         auto Bm = BnA.first;
         auto A = BnA.second;
@@ -731,8 +730,19 @@ matrix_type fit(
         std::cout << "Number of constraints: d = " << dissimilar_pairs_D.size() << " s = " << similar_pairs_S.size()
                   << std::endl;
     }
-    auto new_G = learn_metric(similar_pairs_S, dissimilar_pairs_D, u, l, 2000, initial_solution);
+    auto new_G = learn_metric(similar_pairs_S, dissimilar_pairs_D, u, l, 200, initial_solution);
     return new_G;
+}
+template <typename T>
+unsigned_type argmax(
+        std::vector<T> v
+        ){
+
+    unsigned_type ret = 0;
+    for (int i = 0; i < v.size(); ++i) {
+        if(v[ret] < v[i]) ret = i;
+    }
+    return ret;
 }
 
 template <typename DistFnType, unsigned_type N_LABELS = 3>
@@ -741,43 +751,38 @@ label_row_type knn(
         const label_row_type y_train,
         const matrix_type x_test,
         const unsigned_type num_neighbours,
-        const DistFnType distance
+        const DistFnType dist_fn
         ) {
 
     label_row_type res;
 
-    for (int i = 0; i < x_test.size(); ++i) {
-        auto test_row = x_test[i];
-        std::vector<std::pair<unsigned_type, float_type>> index_distances;
+    // for every point in the test set
+    for (unsigned_type i = 0; i < x_test.size(); ++i) {
+        auto curr_test_row = x_test[i];
+        // All distances
+        std::vector<std::pair<unsigned_type, float_type>> distances(x_train.size());
 
-        // compute the distance between the element and all points in the dataset
-        for (int j = 0; j < x_train.size(); ++j) {
-            auto train_row = x_train[i];
-            index_distances.push_back(std::make_pair(j, distance(test_row, train_row)));
+        // calculate the distance between the current test point and all elements in the dataset.
+        for (unsigned_type j = 0; j < distances.size(); ++j) {
+            auto cur_train_row = x_train[j];
+            distances[j] = std::make_pair(j, dist_fn(cur_train_row, curr_test_row));
         }
 
-        std::sort(index_distances.begin(), index_distances.end(), [](std::pair<unsigned_type, float_type> cur, std::pair<unsigned_type, float_type> next) {
-            return cur.second < next.second;
+        std::sort(distances.begin(), distances.end(), [](std::pair<unsigned_type, float_type> l, std::pair<unsigned_type, float_type> r){
+            return l.second < r.second;
         });
 
-        index_distances.resize(num_neighbours);
+        distances.resize(num_neighbours);
 
-        std::vector<int> mode_count(N_LABELS, 0);
+        std::vector<unsigned_type> class_count(N_LABELS, 0);
 
-        for(int j = 0; j < num_neighbours; ++j){
-            int nearest_index = index_distances[j].first;
-            mode_count[y_train[nearest_index]]++;
+        for(unsigned_type j = 0; j < class_count.size(); ++j){
+            const unsigned_type index = distances[j].first;
+            const unsigned_type curr_class = y_train[index];
+            class_count[curr_class]++;
         }
-
-        int highest_index = 0;
-        for(int j = 0; j < mode_count.size(); ++j){
-            if(mode_count[j] > mode_count[highest_index]) highest_index = j;
-        }
-
-        res.push_back(highest_index);
-
+        res.push_back(argmax(class_count));
     }
-    
     return res;
 }
 

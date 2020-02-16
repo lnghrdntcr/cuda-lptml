@@ -1,5 +1,7 @@
 #include <iostream>
 #include <cstdio>
+#include <algorithm>
+#include <random>
 #include "clion_utils.h"
 #include "lib/csv.h"
 #include "lib/types.h"
@@ -11,7 +13,6 @@
 #define NUM_TESTS 10
 
 int main() {
-
     // Initialize random seed
     srand(time(0));
 
@@ -38,27 +39,29 @@ int main() {
 
     label_row_type y_train;
     label_row_type y_test;
-
     std::vector<float_type> accuracies;
+
+    auto shuffled_ds = parallel_shuffle(dataset, labels);
+    auto new_ds = shuffled_ds.first;
+    auto new_labels = shuffled_ds.second;
 
     for (int i = 0; i < NUM_TESTS; ++i) {
         std::cout << "Test: " << i + 1 << std::endl;
-        train_test_split(&x_train, &x_test, &y_train, &y_test, dataset, labels);
-
+        train_test_split(&x_train, &x_test, &y_train, &y_test, new_ds, new_labels);
         auto G = fit(x_train, y_train, u, l, DIM_Y, DIM_X, combinations(0, x_train.size()));
         auto x_train_lptml = transpose(cpu_mmult(G, transpose(x_train)));
         auto x_test_lptml = transpose(cpu_mmult(G, transpose(x_test)));
-        auto accuracy = predict(x_train_lptml, y_train, x_test_lptml, y_test);
 
-        accuracies.push_back(accuracy);
+        auto accuracy_lptml = predict(x_train_lptml, y_train, x_test_lptml, y_test);
+        auto accuracy_knn = predict(x_train, y_train, x_test, y_test);
+
+        std::cout << "\t\tAccuracy LPTML -> " << accuracy_lptml
+                  << "\n\t\tAccuracy knn -> " << accuracy_knn << std::endl;
+        accuracies.push_back(accuracy_lptml);
+
         x_train.clear();
         x_test.clear();
         y_train.clear();
         y_test.clear();
     }
-
-    for (int i = 0; i < accuracies.size(); ++i) {
-        std::cout << "Test " << i + 1 << ") -> " << accuracies[i] << std::endl;
-    }
-
 }
