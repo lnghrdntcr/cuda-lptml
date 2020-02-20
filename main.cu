@@ -55,6 +55,12 @@ int main() {
         auto accuracy_lptml = predict(x_train_lptml, y_train, x_test_lptml, y_test);
         auto accuracy_knn = predict(x_train, y_train, x_test, y_test);
 
+        // Skip the test if the identity matrix has been used
+        if(accuracy_knn == accuracy_lptml) {
+            i--;
+            std::cout << "Repeating -> ";
+            continue;
+        }
         std::cout << "\t\tAccuracy LPTML -> " << accuracy_lptml
                   << "\n\t\tAccuracy knn -> " << accuracy_knn << std::endl;
         accuracies.push_back(accuracy_lptml);

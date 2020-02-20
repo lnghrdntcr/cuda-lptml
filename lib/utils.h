@@ -160,7 +160,8 @@ matrix_type identity(size_t dimension) {
 
 }
 
-matrix_type cholesky_transformer(matrix_type initial_matrix) {
+matrix_type cholesky_transformer(
+        const matrix_type& initial_matrix) {
 
     auto temp_cholesky = matrix_type (initial_matrix.size(), row_type(initial_matrix.size(), 0.0));
 
@@ -212,7 +213,9 @@ std::vector <T> unwrap_matrix(matrix_type matrix) {
 
 }
 
-row_type cpu_mmult(matrix_type A, row_type x) {
+row_type cpu_mmult(
+        const matrix_type& A,
+        const row_type& x) {
     const unsigned_type num_rows = A.size();
     const unsigned_type num_cols = A[0].size();
 
@@ -237,7 +240,9 @@ matrix_type transpose(
     return ret;
 }
 
-matrix_type cpu_mmult(matrix_type A, matrix_type B) {
+matrix_type cpu_mmult(
+        const matrix_type& A,
+        const matrix_type& B) {
 
 
     assert(A[0].size() == B.size());

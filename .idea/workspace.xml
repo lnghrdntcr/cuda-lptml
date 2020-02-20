@@ -13,8 +13,10 @@
   <component name="ChangeListManager">
     <list default="true" id="5be44cd5-b2de-4eec-8580-735eadfeb485" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/cuda_wrapper.cuh" beforeDir="false" afterPath="$PROJECT_DIR$/lib/cuda_wrapper.cuh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/lptml.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/lptml.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.cu" beforeDir="false" afterPath="$PROJECT_DIR$/main.cu" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,6 +88,7 @@
       <workItem from="1581815255425" duration="2044000" />
       <workItem from="1581817506238" duration="566000" />
       <workItem from="1582235583292" duration="354000" />
+      <workItem from="1582240956995" duration="1733000" />
     </task>
     <servers />
   </component>
@@ -119,22 +122,22 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="1117" y="256" width="628" height="534" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1581287618946" />
-    <state width="1848" height="240" key="GridCell.Tab.0.bottom" timestamp="1582235936764">
+    <state width="1848" height="224" key="GridCell.Tab.0.bottom" timestamp="1582242668465">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="240" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1582235936764" />
-    <state width="1848" height="240" key="GridCell.Tab.0.center" timestamp="1582235936763">
+    <state width="1848" height="224" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1582242668465" />
+    <state width="1848" height="224" key="GridCell.Tab.0.center" timestamp="1582242668463">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="240" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1582235936763" />
-    <state width="1848" height="240" key="GridCell.Tab.0.left" timestamp="1582235936761">
+    <state width="1848" height="224" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1582242668463" />
+    <state width="1848" height="224" key="GridCell.Tab.0.left" timestamp="1582242668462">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="240" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1582235936761" />
-    <state width="1848" height="240" key="GridCell.Tab.0.right" timestamp="1582235936763">
+    <state width="1848" height="224" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1582242668462" />
+    <state width="1848" height="224" key="GridCell.Tab.0.right" timestamp="1582242668464">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="240" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1582235936763" />
+    <state width="1848" height="224" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1582242668464" />
     <state width="1848" height="386" key="GridCell.Tab.1.bottom" timestamp="1581818042764">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
@@ -169,13 +172,18 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/lib/lptml.h</url>
-          <line>214</line>
+          <line>206</line>
           <option name="timeStamp" value="21" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/lib/lptml.h</url>
-          <line>428</line>
+          <line>420</line>
           <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/lib/lptml.h</url>
+          <line>464</line>
+          <option name="timeStamp" value="23" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

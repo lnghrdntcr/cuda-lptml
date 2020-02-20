@@ -21,29 +21,21 @@
 using namespace mosek::fusion;
 using namespace monty;
 
-
-unsigned_type count_single_constraint(
-                                    const pair_type constraint,
-                                    const float_type value,
-                                    const bool UPPER = true
-){
-
-    return 0;
-}
-
-unsigned_type get_dimension(pair_type S,pair_type D) {
+unsigned_type get_dimension(
+        const pair_type& S,
+        const pair_type& D) {
     if(D.size() > 0) return D[0].first.size();
     else return S[0].first.size();
 }
 
 
 std::pair<unsigned_type, unsigned_type> count_violated_constraints_SD(
-                                                                     pair_type S,
-                                                                     pair_type D,
+                                                                     const pair_type& S,
+                                                                     const pair_type& D,
                                                                      matrix_type G,
-                                                                     float_type u,
-                                                                     float_type l,
-                                                                     unsigned_type iterations = 200,
+                                                                     const float_type& u,
+                                                                     const float_type& l,
+                                                                     const unsigned_type& iterations = 200,
                                                                      const bool DEBUG = false
 ){
 
@@ -85,8 +77,8 @@ std::vector<float_type> get_rand_vector_r(unsigned_type dimension){
 }
 
 std::pair<h_prime_type, unsigned_type> subsample (
-        const pair_type S,
-        const pair_type D,
+        const pair_type& S,
+        const pair_type& D,
         const float_type p
         ) {
     srand(time(0));
@@ -128,9 +120,9 @@ h_prime_type calculate_initial_basis(
 
 h_prime_type initial_sort(
         h_prime_type &constraints,
-        const matrix_type A,
-        const float_type u,
-        const float_type l
+        const matrix_type& A,
+        const float_type& u,
+        const float_type& l
         ){
 
 
@@ -206,8 +198,8 @@ h_prime_type initial_sort(
 }
 
 std::vector<constraint_type> unit_get_permutation(
-        std::vector<constraint_type> constraints,
-        std::vector<constraint_type> b_constraints
+        const std::vector<constraint_type>& constraints,
+        const std::vector<constraint_type>& b_constraints
     ) {
 
     std::vector<constraint_type> c_prime_proj;
@@ -232,7 +224,7 @@ std::vector<constraint_type> unit_get_permutation(
 }
 
 unrolled_h_prime_type unroll_h_prime(
-        h_prime_type h_prime
+        const h_prime_type& h_prime
         ) {
 
     unrolled_h_prime_type result;
@@ -266,8 +258,8 @@ unrolled_h_prime_type unroll_h_prime(
 }
 
 h_prime_type get_permutation(
-        h_prime_type B,
-        h_prime_type C,
+        const h_prime_type& B,
+        const h_prime_type& C,
         const bool DEBUG = false
         ) {
 
@@ -399,8 +391,8 @@ void maximal_violation(
 
 matrix_type semidefsolver(
         h_prime_type H,
-        float_type u,
-        float_type l,
+        const float_type u,
+        const float_type l,
         const bool DEBUG = false
         ) {
 
@@ -485,7 +477,9 @@ matrix_type semidefsolver(
         }
 }
 
-float_type cost_fn(matrix_type A) {
+float_type cost_fn(
+        const matrix_type& A
+        ) {
     if(A.size() == 0) return -RAND_MAX;
     unsigned_type d = A.size();
     auto ei = get_rand_vector_r(d);
@@ -499,10 +493,10 @@ float_type cost_fn(matrix_type A) {
 
 std::pair<h_prime_type, float_type> compBasis (
         h_prime_type B,
-        float_type cost,
-        float_type u,
-        float_type l,
-        unsigned_type d
+        const float_type cost,
+        const float_type u,
+        const float_type l,
+        const unsigned_type d
         ) {
     unsigned_type len_constraints = B["S"].size() + B["D"].size();
     if(len_constraints > d * d) {
@@ -549,13 +543,13 @@ std::pair<h_prime_type, float_type> compBasis (
 
 std::pair<h_prime_type, matrix_type> pivot_LPType(
         h_prime_type &B,
-        h_prime_type C,
-        float_type u,
-        float_type l,
-        unsigned_type d,
-        unsigned_type last_cost,
-        bool use_last_cost,
-        matrix_type basis_A,
+        const h_prime_type& C,
+        const float_type u,
+        const float_type l,
+        const unsigned_type d,
+        const unsigned_type last_cost,
+        const bool use_last_cost,
+        const matrix_type& basis_A,
         const bool DEBUG = false
     ){
 
@@ -632,11 +626,11 @@ std::pair<h_prime_type, matrix_type> pivot_LPType(
 }
 
 matrix_type learn_metric (
-        pair_type S,
-        pair_type D,
-        float_type u,
-        float_type l,
-        unsigned_type t,
+        const pair_type& S,
+        const pair_type& D,
+        const float_type u,
+        const float_type l,
+        const unsigned_type t,
         matrix_type initial_solution = matrix_type(),
         const bool DEBUG = false
 ){
@@ -701,13 +695,13 @@ matrix_type learn_metric (
 
 
 matrix_type fit(
-        const matrix_type x,                          // Dataset
-        const label_row_type y,                       // Labels
-        const float_type u,                           // Upper bound
-        const float_type l,                           // Lower bound
-        const size_t DIM_Y,                           // Number of datapoints
-        const size_t DIM_X,                           // Number of features
-        const pair_index_type all_pairs,              // Combinations of all pairs in the dataset
+        const matrix_type& x,                          // Dataset
+        const label_row_type& y,                       // Labels
+        const float_type& u,                           // Upper bound
+        const float_type& l,                           // Lower bound
+        const size_t& DIM_Y,                           // Number of datapoints
+        const size_t& DIM_X,                           // Number of features
+        const pair_index_type& all_pairs,              // Combinations of all pairs in the dataset
         matrix_type initial_solution = matrix_type(), // Initial solution
         const bool DEBUG = false
 ) {
@@ -733,7 +727,7 @@ matrix_type fit(
 }
 template <typename T>
 unsigned_type argmax(
-        std::vector<T> v
+        const std::vector<T>& v
         ){
 
     unsigned_type ret = 0;
@@ -745,10 +739,10 @@ unsigned_type argmax(
 
 template <typename DistFnType, unsigned_type N_LABELS = 3>
 label_row_type knn(
-        const matrix_type x_train,
-        const label_row_type y_train,
-        const matrix_type x_test,
-        const unsigned_type num_neighbours,
+        const matrix_type& x_train,
+        const label_row_type& y_train,
+        const matrix_type& x_test,
+        const unsigned_type& num_neighbours,
         const DistFnType dist_fn
         ) {
 
@@ -785,10 +779,10 @@ label_row_type knn(
 }
 
 float_type predict(
-        const matrix_type x_train,
-        const label_row_type y_train,
-        const matrix_type x_test,
-        const label_row_type y_test
+        const matrix_type& x_train,
+        const label_row_type& y_train,
+        const matrix_type& x_test,
+        const label_row_type& y_test
         ) {
 
     auto results = knn(x_train, y_train, x_test, 3, [](row_type a, row_type b) -> float_type {

@@ -92,11 +92,11 @@ std::pair<unsigned_type, unsigned_type> cuda_reduce_violated_constraints(
 }
 
 std::pair<unsigned_type, unsigned_type> cuda_count_violated_constraints_SD(
-        const pair_type S,
-        const pair_type D,
+        const pair_type& S,
+        const pair_type& D,
         matrix_type &G,
-        const float_type u,
-        const float_type l,
+        const float_type& u,
+        const float_type& l,
         const bool DEBUG = false
     ){
 
