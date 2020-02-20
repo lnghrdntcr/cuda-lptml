@@ -273,8 +273,6 @@ h_prime_type get_permutation(
 
     h_prime_type C_prime;
 
-    //TODO: here
-
     unrolled_h_prime_type b_constraints = unroll_h_prime(B);
     unrolled_h_prime_type c_constraints = unroll_h_prime(C);
 
@@ -431,7 +429,7 @@ matrix_type semidefsolver(
 
         if(DEBUG) std::cout << "Dimension "  << d << std::endl;
 
-        Model::t M = new Model();
+        Model::t M = new Model(); auto _M = finally([&]() { M->dispose(); });
         Variable::t A = M->variable("A", Domain::inPSDCone(d));
         if(!s_empty){
             for(auto constraint: it_s -> second) {
@@ -730,7 +728,7 @@ matrix_type fit(
         std::cout << "Number of constraints: d = " << dissimilar_pairs_D.size() << " s = " << similar_pairs_S.size()
                   << std::endl;
     }
-    auto new_G = learn_metric(similar_pairs_S, dissimilar_pairs_D, u, l, 200, initial_solution);
+    auto new_G = learn_metric(similar_pairs_S, dissimilar_pairs_D, u, l, 20, initial_solution);
     return new_G;
 }
 template <typename T>
