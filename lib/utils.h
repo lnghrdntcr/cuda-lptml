@@ -67,6 +67,35 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort =
     }
 }
 
+template <unsigned_type num_cols = 2>
+void read_synth(
+        std::vector <std::vector<float_type>> *dataset, // The dataset in "matrix form"
+        std::vector<unsigned_type> *labels,            // Labels vector
+        unsigned_type *DIM_Y,                           // Number of elements
+        std::string path                               // Path to csv
+        ) {
+    io::CSVReader<num_cols + 1> csv(path);
+
+    // columns
+    float_type a, b;
+    unsigned_type y;
+
+    csv.read_header(io::ignore_no_column, "a", "b", "y");
+
+    while (csv.read_row(a, b, y)) {
+
+        std::vector<float_type> cur_row;
+
+        cur_row.push_back(as_float_type(a));
+        cur_row.push_back(as_float_type(b));
+        labels->push_back(as_unsigned_type(y));
+        dataset->push_back(cur_row);
+
+    }
+    (*DIM_Y) = (*dataset).size();
+
+}
+
 template<unsigned_type num_cols = 4>
 void read_iris(
         std::vector <std::vector<float_type>> *dataset, // The dataset in "matrix form"
@@ -283,4 +312,14 @@ std::pair<matrix_type, label_row_type> parallel_shuffle(
     return std::make_pair(new_ds, new_labels);
 
 }
+
+bool is_identity(
+        const matrix_type& m
+        ) {
+    for(unsigned_type i = 0; i < m.size(); ++i){
+        if(m[i][i] != 1) return false;
+    }
+    return true;
+}
+
 #endif //LPTML_UTILS_H

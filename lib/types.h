@@ -22,6 +22,9 @@
 #define h_prime_type std::map<std::string, std::vector<constraint_type>>
 #define unrolled_h_prime_type std::vector<std::pair<constraint_type,std::string>>
 
+#define CATEGORIES 3
+#define ATTRIBUTES 4
+
 float_type as_float_type(float el){
     return *(float_type *) (&el);
 }
@@ -29,5 +32,6 @@ float_type as_float_type(float el){
 unsigned_type as_unsigned_type(unsigned int el){
     return *(unsigned_type *) (&el);
 }
+
 
 #endif //LPTML_TYPES_H

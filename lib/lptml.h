@@ -722,7 +722,7 @@ matrix_type fit(
         std::cout << "Number of constraints: d = " << dissimilar_pairs_D.size() << " s = " << similar_pairs_S.size()
                   << std::endl;
     }
-    auto new_G = learn_metric(similar_pairs_S, dissimilar_pairs_D, u, l, 20, initial_solution);
+    auto new_G = learn_metric(similar_pairs_S, dissimilar_pairs_D, u, l, 2000, initial_solution);
     return new_G;
 }
 template <typename T>
@@ -737,7 +737,7 @@ unsigned_type argmax(
     return ret;
 }
 
-template <typename DistFnType, unsigned_type N_LABELS = 3>
+template <typename DistFnType, unsigned_type N_LABELS = CATEGORIES>
 label_row_type knn(
         const matrix_type& x_train,
         const label_row_type& y_train,

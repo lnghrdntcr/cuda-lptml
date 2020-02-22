@@ -76,9 +76,6 @@ std::pair<unsigned_type, unsigned_type> cuda_reduce_violated_constraints(
     unsigned_type result_d;
     unsigned_type result_s;
 
-    cudaStreamSynchronize(stream_S);
-    cudaStreamSynchronize(stream_D);
-
     reduce << < BLOCKS, size_s / 2, 0, stream_S >> > (d_distance_bitmap_S);
     reduce << < BLOCKS, size_d / 2, 0, stream_D >> > (d_distance_bitmap_D);
 
@@ -86,6 +83,9 @@ std::pair<unsigned_type, unsigned_type> cuda_reduce_violated_constraints(
             cudaMemcpyAsync(&result_d, d_distance_bitmap_D, sizeof(unsigned_type), cudaMemcpyDeviceToHost, stream_D));
     CUDA_CHECK_ERROR(
             cudaMemcpyAsync(&result_s, d_distance_bitmap_S, sizeof(unsigned_type), cudaMemcpyDeviceToHost, stream_S));
+
+    cudaStreamSynchronize(stream_S);
+    cudaStreamSynchronize(stream_D);
 
     return std::make_pair(result_d, result_s);
 
@@ -155,6 +155,10 @@ std::pair<unsigned_type, unsigned_type> cuda_count_violated_constraints_SD(
     CUDA_CHECK_ERROR(cudaFree(d_unwrapped_G));
     CUDA_CHECK_ERROR(cudaFree(d_distance_bitmap_S));
     CUDA_CHECK_ERROR(cudaFree(d_distance_bitmap_D));
+
+    CUDA_CHECK_ERROR(cudaStreamDestroy(stream_S));
+    CUDA_CHECK_ERROR(cudaStreamDestroy(stream_D));
+    CUDA_CHECK_ERROR(cudaStreamDestroy(stream_G));
 
 if(DEBUG){
         std::cout << "Size S = " << unwrapped_S.size()<< "\nSize D = " << unwrapped_D.size()<<std::endl;

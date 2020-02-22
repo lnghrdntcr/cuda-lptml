@@ -7,7 +7,7 @@
 #ifndef LPTML_LPTML_CUH
 #define LPTML_LPTML_CUH
 
-template<typename T, unsigned_type column_count = 4>
+template<typename T, unsigned_type column_count = ATTRIBUTES>
 __device__
 __forceinline__
 T l2norm(T *row1, T *row2){
@@ -20,7 +20,7 @@ T l2norm(T *row1, T *row2){
 }
 
 // Note, for obvious reasons res must be PAIR_DIM in size...
-template<typename T, unsigned_type column_count = 4>
+template<typename T, unsigned_type column_count = ATTRIBUTES>
 __global__
 void pairwise_norm(T *res, T *data, const size_t PAIR_DIM) {
     const int tid = blockIdx.x * blockDim.x + threadIdx.x;
@@ -38,7 +38,7 @@ void pairwise_norm(T *res, T *data, const size_t PAIR_DIM) {
 
 }
 
-template<typename T, unsigned_type column_count = 4>
+template<typename T, unsigned_type column_count = ATTRIBUTES>
 __device__
 void mmult(T *M, T *b, T result[column_count]) {
 
@@ -50,7 +50,7 @@ void mmult(T *M, T *b, T result[column_count]) {
 
 }
 
-template<typename T, unsigned_type column_count = 4>
+template<typename T, unsigned_type column_count = ATTRIBUTES>
 __device__
 void difference(T result[column_count], T by[column_count]) {
     for (int i = 0; i < column_count; ++i) {
@@ -58,7 +58,7 @@ void difference(T result[column_count], T by[column_count]) {
     }
 }
 
-template<typename T, unsigned_type column_count = 4>
+template<typename T, unsigned_type column_count = ATTRIBUTES>
 __global__
 void count_violated_constraints_S(unsigned_type *distance_bitmap, T *constraints, T u, T *G, const size_t DIM) {
 
@@ -86,7 +86,7 @@ void count_violated_constraints_S(unsigned_type *distance_bitmap, T *constraints
 
 }
 
-template<typename T, unsigned_type column_count = 4>
+template<typename T, unsigned_type column_count = ATTRIBUTES>
 __global__
 void count_violated_constraints_D(unsigned_type *distance_bitmap, T *constraints, T l, T *G, const size_t DIM) {
 

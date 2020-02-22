@@ -23,7 +23,7 @@ set_property(TARGET fusion64 PROPERTY IMPORTED_LOCATION "/home/francesco/CLionPr
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=address -lineinfo")
 set (CMAKE_EXE_LINKER_FLAGS} "${CMAKE_EXE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=address -lineinfo")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/home/francesco/CLionProjects/lptml_cuda/lib/mosek/9.1/tools/platform/linux64x86/h -L/home/francesco/CLionProjects/lptml_cuda/lib/mosek/9.1/tools/platform/linux64x86/bin/ -lmosek64 -lfusion64 -Wl, rpath-link,/home/francesco/CLionProjects/lptml_cuda/lib/mosek/9.1/tools/platform/linux64x86/bin -Wl,-rpath=/home/francesco/CLionProjects/lptml_cuda/lib/mosek/9.1/tools/platform/linux64x86/bin -Wall -O3")
-
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/home/francesco/CLionProjects/lptml_cuda/lib/mosek/9.1/tools/platform/linux64x86/h -L/home/francesco/CLionProjects/lptml_cuda/lib/mosek/9.1/tools/platform/linux64x86/bin/ -lmosek64 -lfusion64 -Wl, rpath-link,/home/francesco/CLionProjects/lptml_cuda/lib/mosek/9.1/tools/platform/linux64x86/bin -Wl,-rpath=/home/francesco/CLionProjects/lptml_cuda/lib/mosek/9.1/tools/platform/linux64x86/bin")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3")
 add_executable(lptml_cuda main.cu lib/csv.h lib/lptml.cuh lib/utils.h lib/lptml.h lib/types.h lib/cuda_wrapper.cuh)
 target_link_libraries(lptml_cuda mosek64 fusion64)
