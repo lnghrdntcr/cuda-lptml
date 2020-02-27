@@ -67,6 +67,60 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort =
     }
 }
 
+template <unsigned_type num_cols=13>
+void read_wine(
+        std::vector <std::vector<float_type>> *dataset, // The dataset in "matrix form"
+        std::vector<unsigned_type> *labels,            // Labels vector
+        unsigned_type *DIM_Y,                           // Number of elements
+        std::string path                               // Path to csv
+        ) {
+
+    io::CSVReader<num_cols + 1> csv(path);
+
+    // Attributes
+    float_type alcol, malic_acid, ash, acl, mg, phenols;
+    float_type flavanoids, nonflavanoid_phenols;
+    float_type proanth, color_int, hue, od, proline;
+
+    int label;
+
+    while (csv.read_row(
+                    label,
+                    alcol,
+                    malic_acid,
+                    ash,
+                    acl,
+                    mg,
+                    phenols,
+                    flavanoids,
+                    nonflavanoid_phenols,
+                    proanth,
+                    color_int,
+                    hue,
+                    od,
+                    proline
+            )
+        ) {
+        std::vector<float_type> cur_row;
+        cur_row.push_back(alcol);
+        cur_row.push_back(malic_acid);
+        cur_row.push_back(ash);
+        cur_row.push_back(acl);
+        cur_row.push_back(mg);
+        cur_row.push_back(phenols);
+        cur_row.push_back(flavanoids);
+        cur_row.push_back(nonflavanoid_phenols);
+        cur_row.push_back(proanth);
+        cur_row.push_back(color_int);
+        cur_row.push_back(hue);
+        cur_row.push_back(od);
+        cur_row.push_back(proline);
+        labels->push_back(label);
+        dataset->push_back(cur_row);
+    }
+    (*DIM_Y) = dataset->size();
+}
+
 template <unsigned_type num_cols = 2>
 void read_synth(
         std::vector <std::vector<float_type>> *dataset, // The dataset in "matrix form"

@@ -13,10 +13,14 @@
 #include <cstdlib>
 #include <ctime>
 #include <functional>
-#include <algorithm>
+#include <chrono>
 
+#include <algorithm>
 #include "mosek/9.1/tools/platform/linux64x86/h/fusion.h"
+
 #include "mosek/9.1/tools/platform/linux64x86/h/mosek.h"
+
+using namespace std::chrono;
 
 using namespace mosek::fusion;
 using namespace monty;
@@ -42,6 +46,7 @@ std::pair<unsigned_type, unsigned_type> count_violated_constraints_SD(
     srand(time(0));
 
     // Create 2 threads to count violated constraints between S and D
+
     auto constraints = cuda_count_violated_constraints_SD(S, D, G, u, l);
     const unsigned_type n = S.size() + D.size();
 
@@ -644,6 +649,7 @@ matrix_type learn_metric (
     if(initial_solution.size() == 0) initial_solution = identity(dimension);
 
     std::pair <unsigned_type,unsigned_type> violated_constraints = count_violated_constraints_SD(S, D, cholesky_transformer(initial_solution), u, l);
+    
     auto viol_d = violated_constraints.first;
     auto viol_s = violated_constraints.second;
 
@@ -702,7 +708,7 @@ matrix_type fit(
         const size_t& DIM_Y,                           // Number of datapoints
         const size_t& DIM_X,                           // Number of features
         const pair_index_type& all_pairs,              // Combinations of all pairs in the dataset
-        matrix_type initial_solution = matrix_type(), // Initial solution
+        matrix_type initial_solution = matrix_type(),  // Initial solution
         const bool DEBUG = false
 ) {
     pair_type similar_pairs_S;

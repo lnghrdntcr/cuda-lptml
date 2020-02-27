@@ -11,6 +11,8 @@
 #include "lib/cuda_wrapper.cuh"
 #define IRIS_PATH "/home/francesco/CLionProjects/lptml_cuda/datasets/iris.csv"
 #define SYNTH_PATH "/home/francesco/CLionProjects/lptml_cuda/datasets/synth.csv"
+#define WINE_PATH "/home/francesco/CLionProjects/lptml_cuda/datasets/wine.csv"
+
 #define ITERATIONS 200
 #define NUM_TESTS 10
 using namespace std::chrono;
@@ -29,6 +31,7 @@ int main() {
     matrix_type dataset;
     label_row_type labels;
 
+    //(&dataset, &labels, &DIM_Y, WINE_PATH);
     read_iris(&dataset, &labels, &DIM_Y, IRIS_PATH);
     //read_synth(&dataset, &labels, &DIM_Y, SYNTH_PATH);
 
@@ -48,6 +51,10 @@ int main() {
     auto new_ds = shuffled_ds.first;
     auto new_labels = shuffled_ds.second;
     auto timings = std::vector<unsigned_type>();
+
+    for(auto& row: new_ds) {
+        for(auto& dp: row) dp += 2 * ((float_type) rand() / RAND_MAX) - 1;
+    }
 
     for (int i = 0; i < NUM_TESTS; ++i) {
         std::cout << "Test: " << i + 1 << std::endl;
