@@ -14,8 +14,6 @@
     <list default="true" id="5be44cd5-b2de-4eec-8580-735eadfeb485" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lptml.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/lptml.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cu" beforeDir="false" afterPath="$PROJECT_DIR$/main.cu" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -93,6 +91,7 @@
       <workItem from="1582403712908" duration="662000" />
       <workItem from="1582761176613" duration="1532000" />
       <workItem from="1582829746043" duration="208000" />
+      <workItem from="1582840866278" duration="449000" />
     </task>
     <servers />
   </component>
@@ -126,22 +125,22 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="1117" y="256" width="628" height="534" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1581287618946" />
-    <state width="1848" height="401" key="GridCell.Tab.0.bottom" timestamp="1582829963270">
+    <state width="1848" height="401" key="GridCell.Tab.0.bottom" timestamp="1582841215220">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="401" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1582829963270" />
-    <state width="1848" height="401" key="GridCell.Tab.0.center" timestamp="1582829963270">
+    <state width="1848" height="401" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1582841215220" />
+    <state width="1848" height="401" key="GridCell.Tab.0.center" timestamp="1582841215220">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="401" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1582829963270" />
-    <state width="1848" height="401" key="GridCell.Tab.0.left" timestamp="1582829963269">
+    <state width="1848" height="401" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1582841215220" />
+    <state width="1848" height="401" key="GridCell.Tab.0.left" timestamp="1582841215219">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="401" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1582829963269" />
-    <state width="1848" height="401" key="GridCell.Tab.0.right" timestamp="1582829963270">
+    <state width="1848" height="401" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1582841215219" />
+    <state width="1848" height="401" key="GridCell.Tab.0.right" timestamp="1582841215220">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1848" height="401" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1582829963270" />
+    <state width="1848" height="401" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1582841215220" />
     <state width="1848" height="386" key="GridCell.Tab.1.bottom" timestamp="1581818042764">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>

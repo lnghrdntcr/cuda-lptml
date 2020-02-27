@@ -52,10 +52,6 @@ int main() {
     auto new_labels = shuffled_ds.second;
     auto timings = std::vector<unsigned_type>();
 
-    for(auto& row: new_ds) {
-        for(auto& dp: row) dp += 2 * ((float_type) rand() / RAND_MAX) - 1;
-    }
-
     for (int i = 0; i < NUM_TESTS; ++i) {
         std::cout << "Test: " << i + 1 << std::endl;
         train_test_split(&x_train, &x_test, &y_train, &y_test, new_ds, new_labels);
