@@ -22,8 +22,8 @@
 #define h_prime_type std::map<std::string, std::vector<constraint_type>>
 #define unrolled_h_prime_type std::vector<std::pair<constraint_type,std::string>>
 
-#define CATEGORIES 3
-#define ATTRIBUTES 4
+#define CATEGORIES 2
+#define ATTRIBUTES 3
 
 float_type as_float_type(float el){
     return *(float_type *) (&el);

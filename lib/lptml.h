@@ -707,6 +707,7 @@ matrix_type fit(
         const float_type& l,                           // Lower bound
         const size_t& DIM_Y,                           // Number of datapoints
         const size_t& DIM_X,                           // Number of features
+        const unsigned_type iterations,                // Number of iterations
         const pair_index_type& all_pairs,              // Combinations of all pairs in the dataset
         matrix_type initial_solution = matrix_type(),  // Initial solution
         const bool DEBUG = false
@@ -728,7 +729,7 @@ matrix_type fit(
         std::cout << "Number of constraints: d = " << dissimilar_pairs_D.size() << " s = " << similar_pairs_S.size()
                   << std::endl;
     }
-    auto new_G = learn_metric(similar_pairs_S, dissimilar_pairs_D, u, l, 2000, initial_solution);
+    auto new_G = learn_metric(similar_pairs_S, dissimilar_pairs_D, u, l, iterations, initial_solution);
     return new_G;
 }
 template <typename T>
